@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; background: #F5F7FA; }
+  * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; }
+  a { color: #1D4ED8; text-decoration: none; }
+  a:hover { color: #3D7FFF; }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-thumb { background: rgba(15,23,42,0.15); border-radius: 3px; }
+</style>
+</helmet>
+
+<div style="background:#F5F7FA; min-height:100vh; color:#101828; position:relative; overflow-x:hidden;">
+
+  <!-- mobile top bar -->
+  <sc-if value="{{ notDesktop }}" hint-placeholder-val="{{ true }}">
+    <div style="position:fixed; top:0; left:0; right:0; height:58px; background:#FFFFFF; border-bottom:1px solid rgba(15,23,42,0.09); display:flex; align-items:center; justify-content:space-between; padding:0 14px; z-index:40;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <button onClick="{{ toggleSidebar }}" style="background:none; border:none; color:#101828; padding:6px; display:flex; cursor:pointer;">{{ icons.menu }}</button>
+        <div style="width:26px; height:26px; border-radius:8px; background:linear-gradient(135deg,#4C8DFF,#1A4FBF); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px; color:#fff;">B</div>
+        <span style="font-weight:800; font-size:15px; letter-spacing:-0.2px; color:#1D4ED8;">Brique Control</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:6px;">
+        <button style="background:none; border:none; color:#64748B; padding:8px; display:flex; cursor:pointer;">{{ icons.help }}</button>
+        <button style="background:none; border:none; color:#64748B; padding:8px; display:flex; cursor:pointer; position:relative;">{{ icons.bell }}<span style="position:absolute; top:6px; right:6px; width:7px; height:7px; border-radius:50%; background:#E05B5B; border:1.5px solid #FFFFFF;"></span></button>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- sidebar backdrop (mobile, when open) -->
+  <sc-if value="{{ backdropVisible }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ toggleSidebar }}" style="position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:45;"></div>
+  </sc-if>
+
+  <!-- sidebar -->
+  <aside style="{{ sidebarStyle }}">
+    <div style="padding:22px 18px 18px; display:flex; align-items:center; justify-content:space-between;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div style="width:32px; height:32px; border-radius:9px; background:linear-gradient(135deg,#4C8DFF,#1A4FBF); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:15px; color:#fff;">B</div>
+        <span style="font-weight:800; font-size:16px; letter-spacing:-0.2px; color:#1D4ED8;">Brique Control</span>
+      </div>
+      <sc-if value="{{ notDesktop }}" hint-placeholder-val="{{ true }}">
+        <button onClick="{{ toggleSidebar }}" style="background:none; border:none; color:#64748B; padding:4px; display:flex; cursor:pointer;">{{ icons.close }}</button>
+      </sc-if>
+    </div>
+
+    <nav style="flex:1; overflow-y:auto; padding:4px 12px 12px;">
+      <sc-for list="{{ navGroups }}" as="group" hint-placeholder-count="4">
+        <div style="margin-bottom:18px;">
+          <div style="font-size:11px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:#8A93A3; padding:8px 10px 6px;">{{ group.label }}</div>
+          <sc-for list="{{ group.items }}" as="item" hint-placeholder-count="5">
+            <a href="#" onClick="{{ item.onClick }}" style="{{ item.rowStyle }}">
+              <span style="display:flex; width:20px; height:20px; align-items:center; justify-content:center; flex-shrink:0;">{{ item.icon }}</span>
+              <span style="flex:1; font-size:14px; font-weight:600;">{{ item.label }}</span>
+              <sc-if value="{{ item.pro }}" hint-placeholder-val="{{ false }}">
+                <span style="font-size:9.5px; font-weight:800; letter-spacing:0.03em; color:#0B0E14; background:linear-gradient(135deg,#F2C94C,#E0A526); padding:2px 6px; border-radius:6px;">PRO</span>
+              </sc-if>
+            </a>
+          </sc-for>
+        </div>
+      </sc-for>
+    </nav>
+
+    <div style="padding:14px; margin:6px 12px 16px; border-radius:16px; background:linear-gradient(135deg, rgba(76,141,255,0.16), rgba(76,141,255,0.05)); border:1px solid rgba(76,141,255,0.22);">
+      <div style="font-size:13px; font-weight:700; color:#101828; margin-bottom:4px;">Desbloqueie o PRO</div>
+      <div style="font-size:12px; color:#64748B; line-height:1.4; margin-bottom:10px;">IA, loja virtual e relatórios avançados.</div>
+      <a href="#" style="display:block; text-align:center; background:#3D7FFF; color:#fff; font-size:12.5px; font-weight:700; padding:8px; border-radius:10px;">Ver planos</a>
+    </div>
+  </aside>
+
+  <!-- main -->
+  <main style="{{ mainStyle }}">
+
+    <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:22px; gap:16px; flex-wrap:wrap;">
+      <div>
+        <h1 style="margin:0 0 4px; font-size:clamp(20px,3vw,26px); font-weight:800; letter-spacing:-0.3px; color:#1D4ED8;">Olá, Marina!</h1>
+        <p style="margin:0; font-size:14px; color:#64748B;">Aqui está um resumo do seu negócio hoje.</p>
+      </div>
+      <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <button style="background:#FFFFFF; border:1px solid rgba(15,23,42,0.09); color:#64748B; padding:9px; border-radius:11px; display:flex; cursor:pointer;">{{ icons.help }}</button>
+          <button style="background:#FFFFFF; border:1px solid rgba(15,23,42,0.09); color:#64748B; padding:9px; border-radius:11px; display:flex; cursor:pointer; position:relative;">{{ icons.bell }}<span style="position:absolute; top:6px; right:6px; width:6px; height:6px; border-radius:50%; background:#E05B5B;"></span></button>
+        </div>
+      </sc-if>
+    </div>
+
+    <!-- onboarding -->
+    <div style="background:#FFFFFF; border:1px solid rgba(15,23,42,0.09); border-radius:20px; margin-bottom:20px; overflow:hidden;">
+      <div onClick="{{ toggleOnboarding }}" style="display:flex; align-items:center; gap:14px; padding:18px 20px; cursor:pointer;">
+        <div style="flex:1;">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap;">
+            <span style="font-weight:700; font-size:15px; color:#1D4ED8;">Seus primeiros passos</span>
+            <span style="font-size:12px; color:#5B6472; background:rgba(15,23,42,0.06); padding:2px 9px; border-radius:999px;">{{ onboardingDoneCount }} de {{ onboardingTotal }} concluídos</span>
+          </div>
+          <div style="height:6px; background:rgba(15,23,42,0.08); border-radius:999px; overflow:hidden; max-width:280px;">
+            <div style="height:100%; width:{{ onboardingPct }}; background:#3D7FFF; border-radius:999px;"></div>
+          </div>
+        </div>
+        <span style="{{ onboardingChevronStyle }}">{{ icons.chevrondown }}</span>
+      </div>
+      <sc-if value="{{ onboardingOpen }}" hint-placeholder-val="{{ true }}">
+        <div style="padding:0 12px 12px;">
+          <sc-for list="{{ onboardingItems }}" as="step" hint-placeholder-count="4">
+            <div style="display:flex; align-items:center; gap:14px; padding:12px 10px; border-radius:14px;">
+              <div style="{{ step.badgeStyle }}">{{ step.icon }}</div>
+              <div style="flex:1;">
+                <div style="{{ step.titleStyle }}">{{ step.title }}</div>
+                <div style="font-size:12.5px; color:#64748B;">{{ step.desc }}</div>
+              </div>
+              <span style="color:#94A3B8; display:flex;">{{ icons.chevronright }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+
+    <!-- period filter -->
+    <div style="display:flex; gap:8px; margin-bottom:20px; overflow-x:auto; padding-bottom:2px;">
+      <sc-for list="{{ periods }}" as="p" hint-placeholder-count="4">
+        <button onClick="{{ p.onClick }}" style="{{ p.style }}">
+          <sc-if value="{{ p.icon }}" hint-placeholder-val="{{ false }}"><span style="display:flex;">{{ p.icon }}</span></sc-if>
+          {{ p.label }}
+        </button>
+      </sc-for>
+    </div>
+
+    <!-- KPI grid -->
+    <div style="margin-bottom:14px;">
+      <div style="{{ lucroCardStyle }}">
+        <div style="font-size:13px; font-weight:600; color:rgba(255,255,255,0.85); text-shadow:0 1px 3px rgba(0,0,0,0.3); margin-bottom:8px;">Lucro do Período</div>
+        <div style="font-size:clamp(28px,4vw,36px); font-weight:800; color:#fff; text-shadow:0 1px 4px rgba(0,0,0,0.35); letter-spacing:-0.5px;">R$ 4.280</div>
+        <div style="font-size:13px; font-weight:700; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,0.3); margin-top:6px;">↑ 18% vs. período anterior</div>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:22px;">
+      <sc-for list="{{ secondaryCards }}" as="card" hint-placeholder-count="4">
+        <div style="{{ card.style }}">
+          <div style="{{ card.labelStyle }}">{{ card.label }}</div>
+          <div style="{{ card.valueStyle }}">{{ card.value }}</div>
+          <div style="{{ card.subStyle }}">{{ card.sub }}</div>
+        </div>
+      </sc-for>
+    </div>
+
+    <!-- meta do mes -->
+    <div style="background:#FFFFFF; border:1px dashed rgba(15,23,42,0.16); border-radius:20px; padding:22px; margin-bottom:22px;">
+      <sc-if value="{{ hasGoal }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+          <div style="font-weight:700; font-size:15px; color:#1D4ED8;">Meta do Mês: R$ {{ goalDisplay }}</div>
+          <a href="#" onClick="{{ resetGoal }}" style="font-size:12.5px; color:#64748B;">editar</a>
+        </div>
+        <div style="height:10px; background:rgba(15,23,42,0.08); border-radius:999px; overflow:hidden; margin-bottom:8px;">
+          <div style="height:100%; width:{{ goalPct }}; background:linear-gradient(90deg,#3D7FFF,#6FA3FF); border-radius:999px;"></div>
+        </div>
+        <div style="font-size:12.5px; color:#64748B;">R$ 4.280 alcançados de R$ {{ goalDisplay }} ({{ goalPctLabel }})</div>
+      </sc-if>
+      <sc-if value="{{ goalFormOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+          <div style="width:44px; height:44px; border-radius:12px; background:rgba(61,127,255,0.12); display:flex; align-items:center; justify-content:center; color:#3D7FFF; flex-shrink:0;">{{ icons.target }}</div>
+          <div style="flex:1; min-width:180px;">
+            <div style="font-weight:700; font-size:15px; margin-bottom:2px; color:#1D4ED8;">Qual sua meta de lucro este mês?</div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <input value="{{ goalDraft }}" onChange="{{ setGoalDraft }}" placeholder="Ex: 6000" style="width:120px; background:#F5F7FA; border:1px solid rgba(15,23,42,0.15); color:#101828; padding:10px 12px; border-radius:11px; font-size:14px;"/>
+            <button onClick="{{ saveGoal }}" style="background:#3D7FFF; color:#fff; border:none; font-weight:700; font-size:13.5px; padding:10px 16px; border-radius:11px; cursor:pointer;">Salvar</button>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ goalEmptyVisible }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+          <div style="width:48px; height:48px; border-radius:14px; background:rgba(61,127,255,0.12); display:flex; align-items:center; justify-content:center; color:#3D7FFF; flex-shrink:0;">{{ icons.target }}</div>
+          <div style="flex:1; min-width:200px;">
+            <div style="font-weight:700; font-size:15px; margin-bottom:3px; color:#1D4ED8;">Meta do Mês</div>
+            <div style="font-size:13px; color:#64748B;">Defina uma meta de lucro para acompanhar seu progresso.</div>
+          </div>
+          <button onClick="{{ openGoalForm }}" style="background:#3D7FFF; color:#fff; border:none; font-weight:700; font-size:13.5px; padding:10px 18px; border-radius:11px; cursor:pointer; flex-shrink:0;">Definir Meta</button>
+        </div>
+      </sc-if>
+    </div>
+
+    <!-- chart -->
+    <div style="background:#FFFFFF; border:1px solid rgba(15,23,42,0.09); border-radius:20px; padding:22px; margin-bottom:22px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:8px;">
+        <div style="font-weight:700; font-size:15px; color:#1D4ED8;">Performance de Vendas</div>
+        <div style="display:flex; align-items:center; gap:6px; font-size:12.5px; color:#3FBE7A; font-weight:700;">{{ icons.trending }} Últimos 6 meses</div>
+      </div>
+      <div style="display:flex; align-items:flex-end; gap:14px; height:150px; padding:0 4px;">
+        <sc-for list="{{ chartBars }}" as="bar" hint-placeholder-count="6">
+          <div title="{{ bar.title }}" style="flex:1; display:flex; flex-direction:column; align-items:center; gap:8px; height:100%; justify-content:flex-end;">
+            <div style="{{ bar.barStyle }}"></div>
+            <div style="font-size:11.5px; color:#6B7280; font-weight:600;">{{ bar.label }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- extra features -->
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px;">
+      <div style="background:#FFFFFF; border:1px solid rgba(15,23,42,0.09); border-radius:20px; padding:20px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <div style="width:34px; height:34px; border-radius:10px; background:rgba(76,141,255,0.14); color:#4C8DFF; display:flex; align-items:center; justify-content:center;">{{ icons.bars }}</div>
+          <div style="font-weight:700; font-size:14.5px; color:#1D4ED8;">Comparador de Preço</div>
+        </div>
+        <div style="font-size:13px; color:#64748B; line-height:1.5; margin-bottom:12px;">Sugestão de preço de venda com base no que você já cadastrou. <a href="#">Assinantes PRO</a> recebem o preço médio de mercado, atualizado automaticamente.</div>
+        <a href="#" style="font-size:13px; font-weight:700; color:#1D4ED8;">Comparar preço →</a>
+      </div>
+      <div style="background:linear-gradient(135deg, rgba(242,201,76,0.12), rgba(76,141,255,0.08)); border:1px solid rgba(15,23,42,0.08); border-radius:20px; padding:20px;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+          <span style="font-size:9.5px; font-weight:800; letter-spacing:0.03em; color:#0B0E14; background:linear-gradient(135deg,#F2C94C,#E0A526); padding:2px 7px; border-radius:6px;">PRO</span>
+          <div style="font-weight:700; font-size:14.5px; color:#1D4ED8;">Cresça com o Brique Control PRO</div>
+        </div>
+        <div style="font-size:13px; color:#64748B; line-height:1.5; margin-bottom:12px;">Bree (IA), loja virtual própria, migração de dados e relatórios avançados por categoria e fornecedor.</div>
+        <a href="#" style="display:inline-block; background:#3D7FFF; color:#fff; font-size:13px; font-weight:700; padding:9px 16px; border-radius:11px;">Ver planos</a>
+      </div>
+    </div>
+
+    <div style="height:32px;"></div>
+  </main>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+
+const P=(d,key)=>React.createElement('path',{d,key});
+const L=(x1,y1,x2,y2,key)=>React.createElement('line',{x1,y1,x2,y2,key});
+const C=(cx,cy,r,key)=>React.createElement('circle',{cx,cy,r,key});
+const R=(x,y,w,h,rx,key)=>React.createElement('rect',{x,y,width:w,height:h,rx,key});
+const PL=(points,key)=>React.createElement('polyline',{points,key});
+
+const ICON_PATHS = {
+  home: [P('M3 11.5L12 4l9 7.5',0), P('M5 10v10h5v-6h4v6h5V10',1)],
+  box: [P('M21 8l-9-5-9 5 9 5 9-5z',0), P('M3 8v8l9 5 9-5V8',1), L(12,13,12,21,2)],
+  tag: [P('M20.59 13.41L11 3.83A2 2 0 009.58 3.25H4a2 2 0 00-2 2v5.58a2 2 0 00.59 1.42l9.58 9.58a2 2 0 002.83 0l6.18-6.18a2 2 0 000-2.83z',0), C(7.5,7.5,1.4,1)],
+  wallet: [P('M3 7a2 2 0 012-2h12a2 2 0 012 2v3H5a2 2 0 01-2-2z',0), P('M3 10h18v8a2 2 0 01-2 2H5a2 2 0 01-2-2z',1), C(17,15,1.4,2)],
+  users: [P('M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2',0), C(9,7,4,1), P('M23 21v-2a4 4 0 00-3-3.87',2), P('M16 3.13a4 4 0 010 7.75',3)],
+  truck: [R(1,3,15,13,1,0), P('M16 8h4l3 5v3h-7V8z',1), C(5.5,18.5,2.3,2), C(18.5,18.5,2.3,3)],
+  calculator: [R(4,2,16,20,2,0), L(8,7,16,7,1), L(8,11,10,11,2), L(14,11,16,11,3), L(8,15,10,15,4), L(14,15,16,15,5), L(8,19,16,19,6)],
+  search: [C(11,11,7,0), L(21,21,16.2,16.2,1)],
+  bars: [L(18,20,18,10,0), L(12,20,12,4,1), L(6,20,6,14,2)],
+  message: [P('M21 11.5a8.4 8.4 0 01-1.2 4.4L21 21l-5.3-1.4a8.4 8.4 0 01-3.7.9 8.5 8.5 0 118.5-8.5z',0)],
+  store: [P('M4 8h16l-1.2 12.2A2 2 0 0117 22H7a2 2 0 01-1.99-1.8L4 8z',0), P('M8 8V6a4 4 0 118 0v2',1)],
+  refresh: [PL('23 4 23 10 17 10',0), PL('1 20 1 14 7 14',1), P('M3.51 9a9 9 0 0114.85-3.36L23 10',2), P('M20.49 15a9 9 0 01-14.85 3.36L1 14',3)],
+  image: [R(3,3,18,18,2,0), C(8.5,8.5,1.6,1), PL('21 15 16 10 5 21',2)],
+  share: [C(18,5,3,0), C(6,12,3,1), C(18,19,3,2), L(8.6,13.5,15.4,17.5,3), L(15.4,6.5,8.6,10.5,4)],
+  settings: [C(12,12,3,0), P('M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 008.09 4.6 1.65 1.65 0 009 3.1V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z',1)],
+  book: [P('M4 19.5A2.5 2.5 0 016.5 17H20',0), P('M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z',1)],
+  creditcard: [R(1,4,22,16,2,0), L(1,10,23,10,1)],
+  bell: [P('M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9',0), P('M13.73 21a2 2 0 01-3.46 0',1)],
+  help: [C(12,12,10,0), P('M9.09 9a3 3 0 115.83 1c0 2-3 3-3 3',1), C(12,17.3,0.4,2)],
+  menu: [L(3,6,21,6,0), L(3,12,21,12,1), L(3,18,21,18,2)],
+  close: [L(18,6,6,18,0), L(6,6,18,18,1)],
+  chevrondown: [PL('6 9 12 15 18 9',0)],
+  chevronright: [PL('9 18 15 12 9 6',0)],
+  target: [C(12,12,9,0), C(12,12,5.5,1), C(12,12,2,2)],
+  calendar: [R(3,4,18,17,2,0), L(16,2,16,6,1), L(8,2,8,6,2), L(3,10,21,10,3)],
+  check: [PL('20 6 9 17 4 12',0)],
+  trending: [PL('23 6 13.5 15.5 8.5 10.5 1 18',0), PL('17 6 23 6 23 12',1)],
+};
+
+class Component extends DCLogic {
+  state = {
+    sidebarOpen: false,
+    isDesktop: (typeof window !== 'undefined' && window.innerWidth >= 1024),
+    onboardingOpen: true,
+    period: 'mes',
+    goal: null,
+    goalDraft: '',
+    goalFormOpen: false,
+    activeNav: 'inicio',
+  };
+
+  componentDidMount() {
+    this._onResize = () => this.setState({ isDesktop: window.innerWidth >= 1024, sidebarOpen: false });
+    window.addEventListener('resize', this._onResize);
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this._onResize); }
+
+  icon(name, size) {
+    size = size || 20;
+    return React.createElement('svg', { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round', strokeLinejoin: 'round' }, ICON_PATHS[name]);
+  }
+
+  toggleSidebar = () => this.setState(s => ({ sidebarOpen: !s.sidebarOpen }));
+  toggleOnboarding = () => this.setState(s => ({ onboardingOpen: !s.onboardingOpen }));
+  setPeriod = (key) => this.setState({ period: key });
+  selectNav = (key) => {
+    this.setState(s => ({ activeNav: key, sidebarOpen: s.isDesktop ? s.sidebarOpen : false }));
+  };
+  openGoalForm = () => this.setState({ goalFormOpen: true });
+  setGoalDraft = (e) => this.setState({ goalDraft: e.target.value });
+  saveGoal = () => {
+    const v = parseFloat((this.state.goalDraft || '').replace(/\D/g, ''));
+    if (v > 0) this.setState({ goal: v, goalFormOpen: false });
+  };
+  resetGoal = () => this.setState({ goal: null, goalDraft: '', goalFormOpen: false });
+
+  renderVals() {
+    const { sidebarOpen, isDesktop, onboardingOpen, period, goal, goalDraft, goalFormOpen, activeNav } = this.state;
+    const notDesktop = !isDesktop;
+
+    const navRow = (key, label, iconName, pro) => ({
+      key, label, pro: !!pro, icon: this.icon(iconName, 18),
+      onClick: (e) => { e.preventDefault(); if (!pro) this.selectNav(key); },
+      rowStyle: {
+        display: 'flex', alignItems: 'center', gap: 12, padding: '10px 10px', borderRadius: 12, marginBottom: 2,
+        color: activeNav === key ? '#fff' : (pro ? '#94A3B8' : '#475467'),
+        background: activeNav === key ? '#3D7FFF' : 'transparent',
+        fontWeight: activeNav === key ? 700 : 600,
+        opacity: pro ? 0.85 : 1,
+        cursor: pro ? 'default' : 'pointer',
+      },
+    });
+
+    const navGroups = [
+      { label: 'Operação', items: [
+        navRow('inicio', 'Início', 'home'),
+        navRow('produtos', 'Produtos', 'box'),
+        navRow('vendas', 'Vendas', 'tag'),
+        navRow('financeiro', 'Financeiro', 'wallet'),
+        navRow('clientes', 'Clientes', 'users'),
+        navRow('fornecedores', 'Fornecedores', 'truck'),
+      ]},
+      { label: 'Utilitários', items: [
+        navRow('calc', 'Calculadora de Lucro', 'calculator'),
+        navRow('imei', 'Consulta de IMEI', 'search'),
+      ]},
+      { label: 'Recursos PRO', items: [
+        navRow('bree', 'Bree — Assistente IA', 'message', true),
+        navRow('loja', 'Loja Virtual', 'store', true),
+        navRow('migracao', 'Migração com IA', 'refresh', true),
+        navRow('imagens', 'Imagens com IA', 'image', true),
+        navRow('afiliado', 'Painel do Afiliado', 'share', true),
+      ]},
+      { label: 'Conta', items: [
+        navRow('config', 'Configuração da Conta', 'settings'),
+        navRow('tutoriais', 'Tutoriais', 'book'),
+        navRow('assinatura', 'Assinatura', 'creditcard'),
+      ]},
+    ];
+
+    const sidebarStyle = {
+      position: 'fixed', top: 0, left: 0, bottom: 0, width: 260, background: '#FFFFFF',
+      borderRight: '1px solid rgba(15,23,42,0.09)', boxShadow: '2px 0 12px rgba(15,23,42,0.04)', display: 'flex', flexDirection: 'column',
+      zIndex: 50, transition: 'transform 0.25s ease',
+      transform: isDesktop ? 'none' : (sidebarOpen ? 'translateX(0)' : 'translateX(-100%)'),
+    };
+
+    const mainStyle = {
+      marginLeft: isDesktop ? 260 : 0,
+      paddingTop: isDesktop ? 36 : 74,
+      paddingLeft: isDesktop ? 36 : 16,
+      paddingRight: isDesktop ? 36 : 16,
+      paddingBottom: 16,
+      maxWidth: 1100,
+    };
+
+    const onboardingItems = [
+      { title: 'Complete seu cadastro', desc: 'Nome e telefone da sua loja', done: true, icon: this.icon('check', 16) },
+      { title: 'Cadastre seu primeiro produto', desc: 'Adicione um item ao seu estoque', done: true, icon: this.icon('check', 16) },
+      { title: 'Registre sua primeira venda', desc: 'Marque um produto como vendido', done: false, icon: this.icon('box', 16) },
+      { title: 'Adicione um cliente', desc: 'Para fiado ou histórico de compras', done: false, icon: this.icon('users', 16) },
+    ].map(s => ({
+      ...s,
+      badgeStyle: { width: 32, height: 32, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, background: s.done ? 'rgba(63,190,122,0.15)' : 'rgba(15,23,42,0.05)', color: s.done ? '#3FBE7A' : '#64748B' },
+      titleStyle: { fontSize: 14, fontWeight: 600, color: s.done ? '#94A3B8' : '#101828', textDecoration: s.done ? 'line-through' : 'none' },
+    }));
+    const onboardingDoneCount = onboardingItems.filter(s => s.done).length;
+    const onboardingTotal = onboardingItems.length;
+
+    const periodDefs = [ ['7d','7D'], ['30d','30D'], ['mes','Mês Atual'], ['custom','Personalizado'] ];
+    const periods = periodDefs.map(([key, label]) => ({
+      key, label, icon: key === 'custom' ? this.icon('calendar', 14) : null,
+      onClick: () => this.setPeriod(key),
+      style: {
+        display: 'flex', alignItems: 'center', gap: 6, whiteSpace: 'nowrap', padding: '9px 16px', borderRadius: 999, fontSize: 13.5, fontWeight: 700, cursor: 'pointer', border: '1px solid ' + (period === key ? '#3D7FFF' : 'rgba(15,23,42,0.12)'),
+        background: period === key ? '#3D7FFF' : '#FFFFFF', color: period === key ? '#fff' : '#5B6472',
+      },
+    }));
+
+    const secondaryCards = [
+      { label: 'Total em Estoque', value: 'R$ 12.450', sub: '86 produtos', from: '#4C8DFF', to: '#1A4FBF' },
+      { label: 'Total Vendido', value: 'R$ 9.860', sub: '34 vendas', from: '#3FBE7A', to: '#1B7A4A' },
+      { label: 'Total Gasto em Vendas', value: 'R$ 5.580', sub: 'custo dos produtos', from: '#E05B5B', to: '#9B2C2C' },
+      { label: 'Qtd. de Vendas', value: '34', sub: 'vendas no período', neutral: true },
+    ].map(c => ({
+      label: c.label, value: c.value, sub: c.sub,
+      style: {
+        borderRadius: 20, padding: '18px 18px 20px', minHeight: 118,
+        background: c.neutral ? '#F1F4F9' : `linear-gradient(135deg, ${c.from} 0%, ${c.to} 100%)`,
+        border: c.neutral ? '1px solid rgba(15,23,42,0.08)' : 'none',
+      },
+      labelStyle: { fontSize: 12.5, fontWeight: 600, marginBottom: 10, color: c.neutral ? '#5B6472' : 'rgba(255,255,255,0.88)', textShadow: c.neutral ? 'none' : '0 1px 3px rgba(0,0,0,0.3)' },
+      valueStyle: { fontSize: 22, fontWeight: 800, color: c.neutral ? '#101828' : '#fff', letterSpacing: '-0.3px', textShadow: c.neutral ? 'none' : '0 1px 4px rgba(0,0,0,0.35)' },
+      subStyle: { fontSize: 12, marginTop: 6, color: c.neutral ? '#6B7280' : 'rgba(255,255,255,0.75)', textShadow: c.neutral ? 'none' : '0 1px 2px rgba(0,0,0,0.3)' },
+    }));
+
+    const lucroCardStyle = {
+      borderRadius: 22, padding: '24px 24px 26px',
+      background: 'linear-gradient(135deg, #E8B23D 0%, #8A5710 100%)',
+    };
+
+    const chartVals = [ ['Fev',2200], ['Mar',3100], ['Abr',2800], ['Mai',3900], ['Jun',3400], ['Jul',4280] ];
+    const maxVal = Math.max(...chartVals.map(v => v[1]));
+    const chartBars = chartVals.map(([label, value], i) => ({
+      label, title: `${label}: R$ ${value.toLocaleString('pt-BR')}`,
+      barStyle: {
+        width: '100%', maxWidth: 34, borderRadius: 8,
+        height: `${Math.round((value / maxVal) * 100)}%`,
+        background: i === chartVals.length - 1 ? 'linear-gradient(180deg,#4C8DFF,#1A4FBF)' : 'rgba(76,141,255,0.28)',
+      },
+    }));
+
+    const goalPct = goal ? Math.min(100, Math.round((4280 / goal) * 100)) : 0;
+
+    return {
+      notDesktop, isDesktop, backdropVisible: sidebarOpen && !isDesktop,
+      icons: { menu: this.icon('menu'), close: this.icon('close'), help: this.icon('help'), bell: this.icon('bell'), chevrondown: this.icon('chevrondown'), chevronright: this.icon('chevronright', 16), target: this.icon('target', 22), bars: this.icon('bars', 18), trending: this.icon('trending', 14) },
+      toggleSidebar: this.toggleSidebar,
+      sidebarStyle, mainStyle, navGroups,
+      toggleOnboarding: this.toggleOnboarding, onboardingOpen,
+      onboardingDoneCount, onboardingTotal, onboardingPct: `${Math.round((onboardingDoneCount / onboardingTotal) * 100)}%`,
+      onboardingChevronStyle: { display: 'flex', color: '#64748B', transition: 'transform 0.2s', transform: onboardingOpen ? 'rotate(180deg)' : 'none', flexShrink: 0 },
+      onboardingItems,
+      periods,
+      lucroCardStyle, secondaryCards,
+      hasGoal: !!goal && !goalFormOpen,
+      goalFormOpen, goalEmptyVisible: !goal && !goalFormOpen,
+      goalDraft, setGoalDraft: this.setGoalDraft, saveGoal: this.saveGoal, openGoalForm: this.openGoalForm, resetGoal: this.resetGoal,
+      goalDisplay: goal ? goal.toLocaleString('pt-BR') : '', goalPct: `${goalPct}%`, goalPctLabel: `${goalPct}%`,
+      chartBars,
+    };
+  }
+}
+
+</script>
+</body>
+</html>
