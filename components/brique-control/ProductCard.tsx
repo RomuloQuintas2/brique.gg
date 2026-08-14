@@ -68,31 +68,31 @@ export default function ProductCard({
         {product.stock} un.
       </div>
 
-      <div className="flex flex-shrink-0 items-center gap-1.5">
+      <div className="flex flex-shrink-0 flex-wrap items-center gap-1.5">
         <button
           onClick={onSell}
           disabled={product.stock <= 0}
-          title="Vender"
-          className="flex h-9 w-9 items-center justify-center rounded-full text-[#3FBE7A] disabled:cursor-not-allowed disabled:opacity-30"
+          className="flex cursor-pointer items-center gap-1.5 rounded-full border-none px-3 py-1.5 text-xs font-bold text-[#3FBE7A] disabled:cursor-not-allowed disabled:opacity-30"
           style={{ background: "rgba(63,190,122,0.12)" }}
         >
-          <DollarSign size={16} />
+          <DollarSign size={14} />
+          Vender
         </button>
         <button
           onClick={onEdit}
-          title="Editar"
-          className="flex h-9 w-9 items-center justify-center rounded-full text-[#3D7FFF]"
+          className="flex cursor-pointer items-center gap-1.5 rounded-full border-none px-3 py-1.5 text-xs font-bold text-[#3D7FFF]"
           style={{ background: "rgba(76,141,255,0.12)" }}
         >
-          <Pencil size={15} />
+          <Pencil size={13} />
+          Editar
         </button>
         <button
           onClick={onDelete}
-          title="Excluir"
-          className="flex h-9 w-9 items-center justify-center rounded-full text-[#E05B5B]"
+          className="flex cursor-pointer items-center gap-1.5 rounded-full border-none px-3 py-1.5 text-xs font-bold text-[#E05B5B]"
           style={{ background: "rgba(224,91,91,0.12)" }}
         >
-          <Trash2 size={15} />
+          <Trash2 size={13} />
+          Excluir
         </button>
       </div>
     </div>
