@@ -22,7 +22,7 @@ export default function PeriodFilter({
 }) {
   return (
     <div className="mb-5 flex flex-col gap-3">
-      <div className="flex gap-1 overflow-x-auto pb-0.5 sm:gap-2">
+      <div className="flex justify-center gap-1 overflow-x-auto pb-0.5 sm:gap-2">
         {periods.map((p) => {
           const isActive = active === p.key;
           return (
@@ -45,7 +45,7 @@ export default function PeriodFilter({
       </div>
 
       {active === "custom" && (
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center justify-center gap-2">
           <input
             type="date"
             value={customStart}
