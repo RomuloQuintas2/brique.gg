@@ -14,7 +14,7 @@ export default function MetricsOverview({
   salesCountSub,
 }: {
   profit: string;
-  changeLabel: string;
+  changeLabel?: string;
   stock: string;
   stockSub: string;
   sold: string;
@@ -34,10 +34,12 @@ export default function MetricsOverview({
         <div className="text-[clamp(30px,4vw,38px)] font-extrabold tracking-[-0.5px] text-[#1D4ED8]">
           {profit}
         </div>
-        <div className="flex items-center gap-1 text-[13px] font-bold text-[#3FBE7A]">
-          <TrendingUp size={14} />
-          {changeLabel}
-        </div>
+        {changeLabel && (
+          <div className="flex items-center gap-1 text-[13px] font-bold text-[#3FBE7A]">
+            <TrendingUp size={14} />
+            {changeLabel}
+          </div>
+        )}
       </div>
 
       <div

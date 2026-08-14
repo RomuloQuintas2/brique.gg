@@ -1,23 +1,59 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Plus } from "lucide-react";
 import AppShell from "@/components/brique-control/AppShell";
 import PageHeader from "@/components/brique-control/PageHeader";
 import SaleRow, { type Sale } from "@/components/brique-control/SaleRow";
 import RegisterSaleModal from "@/components/brique-control/RegisterSaleModal";
-
-const initialSales: Sale[] = [
-  { id: "1", product: "iPhone 12 128GB", value: 2890, profit: 690, method: "Cartão 2x" },
-  { id: "2", product: "Tênis Adidas Runfalcon", value: 260, profit: 120, method: "Pix" },
-  { id: "3", product: "Fone JBL Tune 510BT", value: 169, profit: 79, method: "Dinheiro" },
-  { id: "4", product: "Notebook Dell Inspiron", value: 2390, profit: 740, method: "Fiado" },
-  { id: "5", product: "Smartwatch Xiaomi Mi Band", value: 189, profit: 79, method: "Cartão 1x" },
-];
+import { createClient } from "@/lib/supabase/client";
 
 function VendasContent() {
-  const [sales, setSales] = useState<Sale[]>(initialSales);
+  const [sales, setSales] = useState<Sale[]>([]);
+  const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase
+      .from("sales")
+      .select("id, product_name, value, profit, payment_method")
+      .order("created_at", { ascending: false })
+      .then(({ data }) => {
+        setSales(
+          (data ?? []).map((s) => ({
+            id: s.id,
+            product_name: s.product_name,
+            value: Number(s.value),
+            profit: Number(s.profit),
+            payment_method: s.payment_method,
+          }))
+        );
+        setLoading(false);
+      });
+  }, []);
+
+  const addSale = async (sale: Omit<Sale, "id">): Promise<boolean> => {
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return false;
+
+    const { data, error } = await supabase
+      .from("sales")
+      .insert({ ...sale, user_id: user.id })
+      .select("id, product_name, value, profit, payment_method")
+      .single();
+
+    if (error || !data) return false;
+
+    setSales((prev) => [
+      { ...data, value: Number(data.value), profit: Number(data.profit) },
+      ...prev,
+    ]);
+    return true;
+  };
 
   return (
     <>
@@ -34,18 +70,28 @@ function VendasContent() {
       </div>
 
       <div className="flex flex-col gap-3">
-        {sales.map((s) => (
-          <SaleRow key={s.id} sale={s} />
-        ))}
+        {loading ? (
+          <div className="py-10 text-center text-sm text-[#64748B]">Carregando...</div>
+        ) : sales.length === 0 ? (
+          <div
+            className="rounded-2xl bg-white py-10 text-center"
+            style={{ border: "1px dashed rgba(15,23,42,0.16)" }}
+          >
+            <p className="m-0 mb-1 text-sm font-bold text-[#101828]">
+              Nenhuma venda registrada ainda
+            </p>
+            <p className="m-0 text-[13px] text-[#64748B]">
+              Clique em &quot;Registrar Venda&quot; assim que vender o primeiro produto.
+            </p>
+          </div>
+        ) : (
+          sales.map((s) => <SaleRow key={s.id} sale={s} />)
+        )}
       </div>
 
       <div className="h-8" />
 
-      <RegisterSaleModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onAdd={(s) => setSales((prev) => [s, ...prev])}
-      />
+      <RegisterSaleModal open={modalOpen} onClose={() => setModalOpen(false)} onAdd={addSale} />
     </>
   );
 }

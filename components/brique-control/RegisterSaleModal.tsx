@@ -14,26 +14,34 @@ export default function RegisterSaleModal({
 }: {
   open: boolean;
   onClose: () => void;
-  onAdd: (sale: Sale) => void;
+  onAdd: (sale: Omit<Sale, "id">) => Promise<boolean>;
 }) {
   const [product, setProduct] = useState("");
   const [value, setValue] = useState("");
   const [cost, setCost] = useState("");
   const [method, setMethod] = useState<PaymentMethod>("Pix");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   if (!open) return null;
 
   const canSave = product.trim().length > 0 && Number(value) > 0;
 
-  const save = () => {
+  const save = async () => {
     if (!canSave) return;
-    onAdd({
-      id: `${Date.now()}`,
-      product: product.trim(),
+    setSaving(true);
+    setError(null);
+    const ok = await onAdd({
+      product_name: product.trim(),
       value: Number(value),
       profit: Number(value) - (Number(cost) || 0),
-      method,
+      payment_method: method,
     });
+    setSaving(false);
+    if (!ok) {
+      setError("Não foi possível registrar a venda. Tente novamente.");
+      return;
+    }
     setProduct("");
     setValue("");
     setCost("");
@@ -109,12 +117,14 @@ export default function RegisterSaleModal({
           </div>
         </div>
 
+        {error && <p className="mt-3 mb-0 text-[13px] text-[#B91C1C]">{error}</p>}
+
         <button
           onClick={save}
-          disabled={!canSave}
+          disabled={!canSave || saving}
           className="mt-5 w-full cursor-pointer rounded-[11px] border-none bg-[#3D7FFF] py-3 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-40"
         >
-          Registrar Venda
+          {saving ? "Salvando..." : "Registrar Venda"}
         </button>
       </div>
     </div>
