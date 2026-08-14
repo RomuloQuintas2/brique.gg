@@ -1,24 +1,66 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Target } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
-const CURRENT_PROFIT = 4280;
-
-export default function GoalCard() {
+export default function GoalCard({ currentProfit }: { currentProfit: number }) {
   const [goal, setGoal] = useState<number | null>(null);
+  const [loaded, setLoaded] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
   const [draft, setDraft] = useState("");
+  const [saving, setSaving] = useState(false);
 
-  const saveGoal = () => {
+  useEffect(() => {
+    const supabase = createClient();
+    (async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data } = await supabase
+        .from("profiles")
+        .select("monthly_goal")
+        .eq("id", user.id)
+        .single();
+
+      if (data?.monthly_goal) setGoal(Number(data.monthly_goal));
+      setLoaded(true);
+    })();
+  }, []);
+
+  const persistGoal = async (value: number | null) => {
+    setSaving(true);
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) {
+      await supabase.from("profiles").update({ monthly_goal: value }).eq("id", user.id);
+    }
+    setSaving(false);
+  };
+
+  const saveGoal = async () => {
     const v = parseFloat(draft.replace(/\D/g, ""));
     if (v > 0) {
       setGoal(v);
       setFormOpen(false);
+      await persistGoal(v);
     }
   };
 
-  const pct = goal ? Math.min(100, Math.round((CURRENT_PROFIT / goal) * 100)) : 0;
+  const resetGoal = async () => {
+    setGoal(null);
+    setDraft("");
+    setFormOpen(false);
+    await persistGoal(null);
+  };
+
+  if (!loaded) return null;
+
+  const pct = goal ? Math.min(100, Math.round((currentProfit / goal) * 100)) : 0;
 
   return (
     <div
@@ -32,11 +74,8 @@ export default function GoalCard() {
               Meta do Mês: R$ {goal.toLocaleString("pt-BR")}
             </div>
             <button
-              onClick={() => {
-                setGoal(null);
-                setDraft("");
-                setFormOpen(false);
-              }}
+              onClick={resetGoal}
+              disabled={saving}
               className="cursor-pointer border-none bg-transparent p-0 text-[12.5px] text-[#64748B]"
             >
               editar
@@ -52,7 +91,7 @@ export default function GoalCard() {
             />
           </div>
           <div className="text-[12.5px] text-[#64748B]">
-            R$ {CURRENT_PROFIT.toLocaleString("pt-BR")} alcançados de R${" "}
+            R$ {currentProfit.toLocaleString("pt-BR")} alcançados de R${" "}
             {goal.toLocaleString("pt-BR")} ({pct}%)
           </div>
         </>
@@ -78,9 +117,10 @@ export default function GoalCard() {
             />
             <button
               onClick={saveGoal}
-              className="cursor-pointer rounded-[11px] border-none bg-[#3D7FFF] px-4 py-2.5 text-[13.5px] font-bold text-white"
+              disabled={saving}
+              className="cursor-pointer rounded-[11px] border-none bg-[#3D7FFF] px-4 py-2.5 text-[13.5px] font-bold text-white disabled:opacity-60"
             >
-              Salvar
+              {saving ? "Salvando..." : "Salvar"}
             </button>
           </div>
         </div>

@@ -143,6 +143,16 @@ function HomeContent() {
   const spent = sold - profit;
   const salesCount = filteredSales.length;
 
+  const monthProfit = useMemo(() => {
+    const now = new Date();
+    return rawSales
+      .filter((s) => {
+        const d = new Date(s.created_at);
+        return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+      })
+      .reduce((sum, s) => sum + s.profit, 0);
+  }, [rawSales]);
+
   return (
     <>
       <PageHeader
@@ -177,7 +187,7 @@ function HomeContent() {
         salesCountSub="no período"
       />
 
-      <GoalCard />
+      <GoalCard currentProfit={monthProfit} />
 
       <SalesChart data={chartData} />
 
