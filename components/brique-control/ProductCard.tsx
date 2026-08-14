@@ -1,9 +1,10 @@
-import { Package, DollarSign, Pencil, Trash2 } from "lucide-react";
+import { DollarSign, Pencil, Trash2 } from "lucide-react";
 
 export type ExtraCost = { label: string; value: number };
 
 export type Product = {
   id: string;
+  icon: string;
   name: string;
   cost: number;
   price: number;
@@ -46,8 +47,8 @@ export default function ProductCard({
       className="flex flex-wrap items-center gap-4 rounded-2xl bg-white p-4"
       style={{ border: "1px solid rgba(15,23,42,0.09)" }}
     >
-      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-[#4C8DFF]/10 text-[#4C8DFF]">
-        <Package size={20} />
+      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-[#4C8DFF]/10 text-2xl">
+        {product.icon}
       </div>
 
       <div className="min-w-[160px] flex-1">

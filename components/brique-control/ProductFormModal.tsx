@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X, Package, Plus, Trash2 } from "lucide-react";
+import { X, Plus, Trash2 } from "lucide-react";
 import type { Product, ExtraCost } from "./ProductCard";
 
 export type ProductFormValues = {
+  icon: string;
   name: string;
   acquisition_date: string | null;
   cost: number;
@@ -15,6 +16,8 @@ export type ProductFormValues = {
 
 const currency = (v: number) =>
   v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+const EMOJI_OPTIONS = ["📦", "📱", "👟", "🎧", "⌚", "💻", "🎮", "📷"];
 
 type ExtraCostDraft = { label: string; value: string };
 
@@ -31,6 +34,7 @@ export default function ProductFormModal({
   onClose: () => void;
   onSubmit: (values: ProductFormValues) => Promise<boolean>;
 }) {
+  const [icon, setIcon] = useState(EMOJI_OPTIONS[0]);
   const [name, setName] = useState("");
   const [acquisitionDate, setAcquisitionDate] = useState("");
   const [cost, setCost] = useState("");
@@ -43,6 +47,7 @@ export default function ProductFormModal({
   useEffect(() => {
     if (!open) return;
     if (initial) {
+      setIcon(initial.icon || EMOJI_OPTIONS[0]);
       setName(initial.name);
       setAcquisitionDate(initial.acquisition_date ?? "");
       setCost(String(initial.cost));
@@ -50,6 +55,7 @@ export default function ProductFormModal({
       setStock(String(initial.stock));
       setExtraCosts(initial.extra_costs.map((e) => ({ label: e.label, value: String(e.value) })));
     } else {
+      setIcon(EMOJI_OPTIONS[0]);
       setName("");
       setAcquisitionDate("");
       setCost("");
@@ -82,6 +88,7 @@ export default function ProductFormModal({
     setSaving(true);
     setError(null);
     const ok = await onSubmit({
+      icon,
       name: name.trim(),
       acquisition_date: acquisitionDate || null,
       cost: costNum,
@@ -107,8 +114,8 @@ export default function ProductFormModal({
         className="w-full max-w-[460px] rounded-[20px] bg-white p-6"
       >
         <div className="mb-4 flex items-start justify-between">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#3D7FFF]/10 text-[#3D7FFF]">
-            <Package size={22} />
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#3D7FFF]/10 text-2xl">
+            {icon}
           </div>
           <button
             onClick={onClose}
@@ -121,6 +128,21 @@ export default function ProductFormModal({
         <h2 className="m-0 mb-4 text-lg font-extrabold text-[#1D4ED8]">
           {mode === "edit" ? "Editar Produto" : "Novo Produto"}
         </h2>
+
+        <div className="mb-3 flex gap-1.5">
+          {EMOJI_OPTIONS.map((e) => (
+            <button
+              key={e}
+              onClick={() => setIcon(e)}
+              className={`flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl text-lg ${
+                icon === e ? "bg-[#3D7FFF]/15" : "bg-[#F5F7FA]"
+              }`}
+              style={{ border: icon === e ? "1px solid #3D7FFF" : "1px solid rgba(15,23,42,0.09)" }}
+            >
+              {e}
+            </button>
+          ))}
+        </div>
 
         <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-1.5">

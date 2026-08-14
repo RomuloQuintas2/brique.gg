@@ -11,10 +11,11 @@ import ConfirmDialog from "@/components/brique-control/ConfirmDialog";
 import { createClient } from "@/lib/supabase/client";
 import type { PaymentMethod } from "@/components/brique-control/PaymentBadge";
 
-const SELECT_FIELDS = "id, name, cost, price, stock, acquisition_date, extra_costs";
+const SELECT_FIELDS = "id, icon, name, cost, price, stock, acquisition_date, extra_costs";
 
 function mapRow(p: {
   id: string;
+  icon: string;
   name: string;
   cost: number | string;
   price: number | string;
@@ -24,6 +25,7 @@ function mapRow(p: {
 }): Product {
   return {
     id: p.id,
+    icon: p.icon || "📦",
     name: p.name,
     cost: Number(p.cost),
     price: Number(p.price),
