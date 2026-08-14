@@ -14,6 +14,13 @@ const ROUTE_FOR_KEY: Record<string, string> = {
   produtos: "/painel/produtos",
   vendas: "/painel/vendas",
   financeiro: "/painel/financeiro",
+  clientes: "/painel/clientes",
+  fornecedores: "/painel/fornecedores",
+  calc: "/painel/calculadora",
+  imei: "/painel/imei",
+  config: "/painel/conta",
+  tutoriais: "/painel/tutoriais",
+  assinatura: "/painel/assinatura",
 };
 
 function keyForPathname(pathname: string) {
