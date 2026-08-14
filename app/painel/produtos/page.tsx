@@ -5,37 +5,58 @@ import { Plus, Search } from "lucide-react";
 import AppShell from "@/components/brique-control/AppShell";
 import PageHeader from "@/components/brique-control/PageHeader";
 import ProductCard, { type Product } from "@/components/brique-control/ProductCard";
-import NewProductModal from "@/components/brique-control/NewProductModal";
+import ProductFormModal, { type ProductFormValues } from "@/components/brique-control/ProductFormModal";
+import SellProductModal from "@/components/brique-control/SellProductModal";
+import ConfirmDialog from "@/components/brique-control/ConfirmDialog";
 import { createClient } from "@/lib/supabase/client";
+import type { PaymentMethod } from "@/components/brique-control/PaymentBadge";
+
+const SELECT_FIELDS = "id, name, cost, price, stock, acquisition_date, extra_costs";
+
+function mapRow(p: {
+  id: string;
+  name: string;
+  cost: number | string;
+  price: number | string;
+  stock: number;
+  acquisition_date: string | null;
+  extra_costs: { label: string; value: number }[] | null;
+}): Product {
+  return {
+    id: p.id,
+    name: p.name,
+    cost: Number(p.cost),
+    price: Number(p.price),
+    stock: p.stock,
+    acquisition_date: p.acquisition_date,
+    extra_costs: p.extra_costs ?? [],
+  };
+}
 
 function ProdutosContent() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
-  const [modalOpen, setModalOpen] = useState(false);
+
+  const [formOpen, setFormOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [sellTarget, setSellTarget] = useState<Product | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Product | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
     supabase
       .from("products")
-      .select("id, icon, name, cost, price, stock")
+      .select(SELECT_FIELDS)
       .order("created_at", { ascending: false })
       .then(({ data }) => {
-        setProducts(
-          (data ?? []).map((p) => ({
-            id: p.id,
-            icon: p.icon,
-            name: p.name,
-            cost: Number(p.cost),
-            price: Number(p.price),
-            stock: p.stock,
-          }))
-        );
+        setProducts((data ?? []).map(mapRow));
         setLoading(false);
       });
   }, []);
 
-  const addProduct = async (product: Omit<Product, "id">): Promise<boolean> => {
+  const addProduct = async (values: ProductFormValues): Promise<boolean> => {
     const supabase = createClient();
     const {
       data: { user },
@@ -44,16 +65,72 @@ function ProdutosContent() {
 
     const { data, error } = await supabase
       .from("products")
-      .insert({ ...product, user_id: user.id })
-      .select("id, icon, name, cost, price, stock")
+      .insert({ ...values, user_id: user.id })
+      .select(SELECT_FIELDS)
       .single();
 
     if (error || !data) return false;
+    setProducts((prev) => [mapRow(data), ...prev]);
+    return true;
+  };
 
-    setProducts((prev) => [
-      { ...data, cost: Number(data.cost), price: Number(data.price) },
-      ...prev,
-    ]);
+  const editProduct = async (values: ProductFormValues): Promise<boolean> => {
+    if (!editingProduct) return false;
+    const supabase = createClient();
+
+    const { data, error } = await supabase
+      .from("products")
+      .update(values)
+      .eq("id", editingProduct.id)
+      .select(SELECT_FIELDS)
+      .single();
+
+    if (error || !data) return false;
+    const updated = mapRow(data);
+    setProducts((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
+    return true;
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    const supabase = createClient();
+    const { error } = await supabase.from("products").delete().eq("id", deleteTarget.id);
+    setDeleting(false);
+    if (error) return;
+    setProducts((prev) => prev.filter((p) => p.id !== deleteTarget.id));
+    setDeleteTarget(null);
+  };
+
+  const sellProduct = async (value: number, method: PaymentMethod): Promise<boolean> => {
+    if (!sellTarget) return false;
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return false;
+
+    const cost = sellTarget.cost + sellTarget.extra_costs.reduce((s, e) => s + e.value, 0);
+
+    const { error: saleError } = await supabase.from("sales").insert({
+      user_id: user.id,
+      product_name: sellTarget.name,
+      value,
+      profit: value - cost,
+      payment_method: method,
+    });
+    if (saleError) return false;
+
+    const newStock = Math.max(0, sellTarget.stock - 1);
+    const { error: stockError } = await supabase
+      .from("products")
+      .update({ stock: newStock })
+      .eq("id", sellTarget.id);
+    if (stockError) return false;
+
+    setProducts((prev) =>
+      prev.map((p) => (p.id === sellTarget.id ? { ...p, stock: newStock } : p))
+    );
     return true;
   };
 
@@ -79,7 +156,10 @@ function ProdutosContent() {
           />
         </div>
         <button
-          onClick={() => setModalOpen(true)}
+          onClick={() => {
+            setEditingProduct(null);
+            setFormOpen(true);
+          }}
           className="flex flex-shrink-0 cursor-pointer items-center gap-1.5 rounded-full border-none bg-[#3D7FFF] px-4 py-2.5 text-[13.5px] font-bold text-white"
         >
           <Plus size={16} />
@@ -107,13 +187,46 @@ function ProdutosContent() {
             Nenhum produto encontrado.
           </div>
         ) : (
-          filtered.map((p) => <ProductCard key={p.id} product={p} />)
+          filtered.map((p) => (
+            <ProductCard
+              key={p.id}
+              product={p}
+              onSell={() => setSellTarget(p)}
+              onEdit={() => {
+                setEditingProduct(p);
+                setFormOpen(true);
+              }}
+              onDelete={() => setDeleteTarget(p)}
+            />
+          ))
         )}
       </div>
 
       <div className="h-8" />
 
-      <NewProductModal open={modalOpen} onClose={() => setModalOpen(false)} onAdd={addProduct} />
+      <ProductFormModal
+        open={formOpen}
+        mode={editingProduct ? "edit" : "create"}
+        initial={editingProduct}
+        onClose={() => setFormOpen(false)}
+        onSubmit={editingProduct ? editProduct : addProduct}
+      />
+
+      <SellProductModal
+        open={!!sellTarget}
+        product={sellTarget}
+        onClose={() => setSellTarget(null)}
+        onConfirm={sellProduct}
+      />
+
+      <ConfirmDialog
+        open={!!deleteTarget}
+        title="Excluir produto?"
+        description={`Isso vai remover "${deleteTarget?.name}" permanentemente. Essa ação não pode ser desfeita.`}
+        loading={deleting}
+        onCancel={() => setDeleteTarget(null)}
+        onConfirm={confirmDelete}
+      />
     </>
   );
 }
