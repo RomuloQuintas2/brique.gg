@@ -8,7 +8,7 @@ import PeriodFilter from "@/components/brique-control/PeriodFilter";
 import MetricsOverview from "@/components/brique-control/MetricsOverview";
 import GoalCard from "@/components/brique-control/GoalCard";
 import SalesChart, { type SalesChartPoint } from "@/components/brique-control/SalesChart";
-import PriceComparatorCard from "@/components/brique-control/PriceComparatorCard";
+import SalesPlatformsCard from "@/components/brique-control/SalesPlatformsCard";
 import UpsellCard from "@/components/brique-control/UpsellCard";
 import { useBrique } from "@/components/brique-control/BriqueContext";
 import { createClient } from "@/lib/supabase/client";
@@ -42,6 +42,7 @@ function HomeContent() {
   const [spent, setSpent] = useState(0);
   const [salesCount, setSalesCount] = useState(0);
   const [chartData, setChartData] = useState<SalesChartPoint[]>([]);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
@@ -82,6 +83,8 @@ function HomeContent() {
             .reduce((sum, s) => sum + Number(s.value), 0),
         }))
       );
+
+      setLoaded(true);
     })();
   }, []);
 
@@ -92,7 +95,9 @@ function HomeContent() {
         subtitle="Aqui está um resumo do seu negócio hoje."
       />
 
-      <OnboardingCard />
+      {loaded && (
+        <OnboardingCard hasProducts={stockCount > 0} hasSales={salesCount > 0} />
+      )}
 
       <PeriodFilter active={period} onChange={setPeriod} />
 
@@ -112,8 +117,9 @@ function HomeContent() {
 
       <SalesChart data={chartData} />
 
+      <SalesPlatformsCard data={[]} />
+
       <div className="grid grid-cols-1 gap-3.5 [grid-template-columns:repeat(auto-fit,minmax(260px,1fr))]">
-        <PriceComparatorCard />
         <UpsellCard onUpgradeClick={openUpgradeModal} />
       </div>
 

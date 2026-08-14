@@ -2,12 +2,18 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Package, Tag, ArrowRight, X } from "lucide-react";
+import { Package, Tag, ArrowRight, Check, X } from "lucide-react";
 
-export default function OnboardingCard() {
+export default function OnboardingCard({
+  hasProducts,
+  hasSales,
+}: {
+  hasProducts: boolean;
+  hasSales: boolean;
+}) {
   const [dismissed, setDismissed] = useState(false);
 
-  if (dismissed) return null;
+  if (dismissed || (hasProducts && hasSales)) return null;
 
   return (
     <div
@@ -37,10 +43,14 @@ export default function OnboardingCard() {
           style={{ background: "rgba(76,141,255,0.06)", border: "1px solid rgba(76,141,255,0.18)" }}
         >
           <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-[#3D7FFF]/15 text-[#3D7FFF]">
-            <Package size={20} />
+            {hasProducts ? <Check size={20} /> : <Package size={20} />}
           </div>
           <div className="min-w-0 flex-1">
-            <div className="text-sm font-bold text-[#101828]">1. Cadastre um produto</div>
+            <div
+              className={`text-sm font-bold ${hasProducts ? "text-slate-400 line-through" : "text-[#101828]"}`}
+            >
+              1. Cadastre um produto
+            </div>
             <div className="text-xs text-[#64748B]">Adicione o que você tem pra vender</div>
           </div>
           <ArrowRight size={16} className="flex-shrink-0 text-[#3D7FFF]" />
@@ -52,10 +62,14 @@ export default function OnboardingCard() {
           style={{ background: "rgba(63,190,122,0.06)", border: "1px solid rgba(63,190,122,0.18)" }}
         >
           <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-[#3FBE7A]/15 text-[#3FBE7A]">
-            <Tag size={20} />
+            {hasSales ? <Check size={20} /> : <Tag size={20} />}
           </div>
           <div className="min-w-0 flex-1">
-            <div className="text-sm font-bold text-[#101828]">2. Registre uma venda</div>
+            <div
+              className={`text-sm font-bold ${hasSales ? "text-slate-400 line-through" : "text-[#101828]"}`}
+            >
+              2. Registre uma venda
+            </div>
             <div className="text-xs text-[#64748B]">Veja seu lucro calculado na hora</div>
           </div>
           <ArrowRight size={16} className="flex-shrink-0 text-[#3FBE7A]" />
