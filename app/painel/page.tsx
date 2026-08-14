@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import AppShell from "@/components/brique-control/AppShell";
 import PageHeader from "@/components/brique-control/PageHeader";
 import OnboardingCard from "@/components/brique-control/OnboardingCard";
@@ -30,17 +30,54 @@ function lastSixMonths() {
   return months;
 }
 
+function toLocalISODate(d: Date) {
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+function getDateRange(period: string, customStart: string, customEnd: string) {
+  const now = new Date();
+  const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+
+  if (period === "7d") {
+    return {
+      start: new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6),
+      end: endOfToday,
+    };
+  }
+  if (period === "30d") {
+    return {
+      start: new Date(now.getFullYear(), now.getMonth(), now.getDate() - 29),
+      end: endOfToday,
+    };
+  }
+  if (period === "custom") {
+    return {
+      start: customStart ? new Date(`${customStart}T00:00:00`) : new Date(now.getFullYear(), 0, 1),
+      end: customEnd ? new Date(`${customEnd}T23:59:59`) : endOfToday,
+    };
+  }
+  // "ano" — desde 1 de janeiro
+  return { start: new Date(now.getFullYear(), 0, 1), end: endOfToday };
+}
+
+type RawSale = { value: number; profit: number; created_at: string };
+
 function HomeContent() {
-  const [period, setPeriod] = useState("mes");
+  const today = new Date();
+  const [period, setPeriod] = useState("ano");
+  const [customStart, setCustomStart] = useState(
+    toLocalISODate(new Date(today.getFullYear(), today.getMonth(), today.getDate() - 29))
+  );
+  const [customEnd, setCustomEnd] = useState(toLocalISODate(today));
   const { openUpgradeModal } = useBrique();
 
   const [firstName, setFirstName] = useState("");
   const [stockValue, setStockValue] = useState(0);
   const [stockCount, setStockCount] = useState(0);
-  const [profit, setProfit] = useState(0);
-  const [sold, setSold] = useState(0);
-  const [spent, setSpent] = useState(0);
-  const [salesCount, setSalesCount] = useState(0);
+  const [rawSales, setRawSales] = useState<RawSale[]>([]);
   const [chartData, setChartData] = useState<SalesChartPoint[]>([]);
   const [loaded, setLoaded] = useState(false);
 
@@ -64,13 +101,12 @@ function HomeContent() {
       setStockValue(productList.reduce((sum, p) => sum + Number(p.price) * p.stock, 0));
       setStockCount(productList.length);
 
-      const saleList = sales ?? [];
-      const totalProfit = saleList.reduce((sum, s) => sum + Number(s.profit), 0);
-      const totalValue = saleList.reduce((sum, s) => sum + Number(s.value), 0);
-      setProfit(totalProfit);
-      setSold(totalValue);
-      setSpent(totalValue - totalProfit);
-      setSalesCount(saleList.length);
+      const saleList = (sales ?? []).map((s) => ({
+        value: Number(s.value),
+        profit: Number(s.profit),
+        created_at: s.created_at,
+      }));
+      setRawSales(saleList);
 
       setChartData(
         lastSixMonths().map(({ year, month, label }) => ({
@@ -80,13 +116,32 @@ function HomeContent() {
               const d = new Date(s.created_at);
               return d.getFullYear() === year && d.getMonth() === month;
             })
-            .reduce((sum, s) => sum + Number(s.value), 0),
+            .reduce((sum, s) => sum + s.value, 0),
         }))
       );
 
       setLoaded(true);
     })();
   }, []);
+
+  const { start, end } = useMemo(
+    () => getDateRange(period, customStart, customEnd),
+    [period, customStart, customEnd]
+  );
+
+  const filteredSales = useMemo(
+    () =>
+      rawSales.filter((s) => {
+        const d = new Date(s.created_at);
+        return d >= start && d <= end;
+      }),
+    [rawSales, start, end]
+  );
+
+  const profit = filteredSales.reduce((sum, s) => sum + s.profit, 0);
+  const sold = filteredSales.reduce((sum, s) => sum + s.value, 0);
+  const spent = sold - profit;
+  const salesCount = filteredSales.length;
 
   return (
     <>
@@ -96,10 +151,19 @@ function HomeContent() {
       />
 
       {loaded && (
-        <OnboardingCard hasProducts={stockCount > 0} hasSales={salesCount > 0} />
+        <OnboardingCard hasProducts={stockCount > 0} hasSales={rawSales.length > 0} />
       )}
 
-      <PeriodFilter active={period} onChange={setPeriod} />
+      <PeriodFilter
+        active={period}
+        onChange={setPeriod}
+        customStart={customStart}
+        customEnd={customEnd}
+        onCustomChange={(s, e) => {
+          setCustomStart(s);
+          setCustomEnd(e);
+        }}
+      />
 
       <MetricsOverview
         profit={currency(profit)}
@@ -110,7 +174,7 @@ function HomeContent() {
         spent={currency(spent)}
         spentSub="custo dos produtos vendidos"
         salesCount={String(salesCount)}
-        salesCountSub="no total"
+        salesCountSub="no período"
       />
 
       <GoalCard />
