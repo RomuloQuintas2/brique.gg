@@ -12,42 +12,53 @@ export default function Sidebar({
   activeNav,
   onSelectNav,
   onLogout,
+  side = "left",
+  hideKeys = [],
 }: {
   open: boolean;
   onClose: () => void;
   activeNav: string;
   onSelectNav: (key: string) => void;
   onLogout: () => void;
+  side?: "left" | "right";
+  hideKeys?: string[];
 }) {
   const { isPro, openUpgradeModal } = useBrique();
+  const isRight = side === "right";
+
+  const visibleGroups = navGroups
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => !hideKeys.includes(item.key)),
+    }))
+    .filter((group) => group.items.length > 0);
 
   return (
     <>
       {open && (
-        <div
-          onClick={onClose}
-          className="fixed inset-0 z-40 bg-black/55 lg:hidden"
-        />
+        <div onClick={onClose} className="fixed inset-0 z-40 bg-black/55 lg:hidden" />
       )}
 
       <aside
-        className={`fixed top-0 left-0 z-50 flex h-screen w-[260px] flex-col bg-white shadow-[2px_0_12px_rgba(15,23,42,0.04)] transition-transform duration-300 ease-in-out lg:translate-x-0 ${
-          open ? "translate-x-0" : "-translate-x-full"
+        className={`fixed top-0 z-50 flex h-screen w-[260px] flex-col bg-white transition-transform duration-300 ease-in-out ${
+          isRight
+            ? `right-0 lg:hidden ${open ? "translate-x-0" : "translate-x-full"} shadow-[-2px_0_12px_rgba(15,23,42,0.04)]`
+            : `left-0 lg:translate-x-0 ${open ? "translate-x-0" : "-translate-x-full"} shadow-[2px_0_12px_rgba(15,23,42,0.04)]`
         }`}
-        style={{ borderRight: "1px solid rgba(15,23,42,0.09)" }}
+        style={isRight ? { borderLeft: "1px solid rgba(15,23,42,0.09)" } : { borderRight: "1px solid rgba(15,23,42,0.09)" }}
       >
         <div className="flex items-center justify-between px-[18px] pt-[22px] pb-[18px]">
           <Logo size={32} textSize={16} />
           <button
             onClick={onClose}
-            className="flex cursor-pointer items-center border-none bg-none p-1 text-[#64748B] lg:hidden"
+            className={`flex cursor-pointer items-center border-none bg-none p-1 text-[#64748B] ${isRight ? "" : "lg:hidden"}`}
           >
             <X size={20} />
           </button>
         </div>
 
         <nav className="flex-1 overflow-y-auto px-3 pt-1 pb-3">
-          {navGroups.map((group) => (
+          {visibleGroups.map((group) => (
             <div key={group.label} className="mb-[18px]">
               <div className="px-2.5 pt-2 pb-1.5 text-[11px] font-bold tracking-[0.06em] text-[#8A93A3] uppercase">
                 {group.label}

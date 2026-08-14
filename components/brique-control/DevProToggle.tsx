@@ -8,7 +8,7 @@ export default function DevProToggle() {
   return (
     <button
       onClick={() => setIsPro(!isPro)}
-      className="fixed right-4 bottom-4 z-[70] cursor-pointer rounded-full px-4 py-2 text-xs font-bold text-white shadow-lg"
+      className="fixed right-4 bottom-20 z-[70] cursor-pointer rounded-full px-4 py-2 text-xs font-bold text-white shadow-lg lg:bottom-4"
       style={{ background: isPro ? "#1B7A4A" : "#334155" }}
       title="Alternar modo de teste Free/PRO"
     >
