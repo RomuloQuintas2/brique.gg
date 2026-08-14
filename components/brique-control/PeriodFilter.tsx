@@ -22,21 +22,22 @@ export default function PeriodFilter({
 }) {
   return (
     <div className="mb-5 flex flex-col gap-3">
-      <div className="flex gap-2 overflow-x-auto pb-0.5">
+      <div className="flex gap-1 overflow-x-auto pb-0.5 sm:gap-2">
         {periods.map((p) => {
           const isActive = active === p.key;
           return (
             <button
               key={p.key}
               onClick={() => onChange(p.key)}
-              className={`flex flex-shrink-0 cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-2.5 text-[13.5px] font-bold ${
+              className={`flex flex-shrink-0 cursor-pointer items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-1.5 text-[11.5px] font-bold sm:gap-1.5 sm:px-4 sm:py-2.5 sm:text-[13.5px] ${
                 isActive ? "bg-[#3D7FFF] text-white" : "bg-white text-[#5B6472]"
               }`}
               style={{
                 border: `1px solid ${isActive ? "#3D7FFF" : "rgba(15,23,42,0.12)"}`,
               }}
             >
-              {p.key === "custom" && <Calendar size={14} />}
+              {p.key === "custom" && <Calendar size={12} className="flex-shrink-0 sm:hidden" />}
+              {p.key === "custom" && <Calendar size={14} className="hidden flex-shrink-0 sm:block" />}
               {p.label}
             </button>
           );
