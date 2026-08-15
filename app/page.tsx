@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Package, Tag, Wallet, Target, TrendingUp, BadgeCheck, Check, Infinity as InfinityIcon } from "lucide-react";
 import Logo from "@/components/brique-control/Logo";
+import SocialProof from "@/components/brique-control/SocialProof";
+import ProBadge from "@/components/brique-control/ProBadge";
 
 const steps = [
   {
@@ -165,6 +167,8 @@ export default function LandingPage() {
           </div>
         </section>
 
+        <SocialProof />
+
         <section className="py-10">
           <p className="m-0 mb-10 text-center text-2xl font-extrabold text-[#101828]">
             Tudo que o seu negócio precisa.
@@ -176,13 +180,34 @@ export default function LandingPage() {
                 className="rounded-[20px] bg-white p-5"
                 style={{ border: "1px solid rgba(15,23,42,0.09)" }}
               >
-                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-[#4C8DFF]/10 text-[#4C8DFF]">
+                <div
+                  className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl text-white"
+                  style={{ background: "linear-gradient(135deg,#4C8DFF,#1A4FBF)" }}
+                >
                   <f.icon size={20} />
                 </div>
                 <div className="mb-1 text-[14.5px] font-bold text-[#1D4ED8]">{f.title}</div>
                 <p className="m-0 text-[13px] leading-relaxed text-[#64748B]">{f.desc}</p>
               </div>
             ))}
+          </div>
+        </section>
+
+        <section className="py-8">
+          <div
+            className="rounded-[24px] bg-white p-8 text-center sm:p-10"
+            style={{ border: "1px solid rgba(15,23,42,0.09)" }}
+          >
+            <div className="mb-3 flex flex-wrap items-center justify-center gap-2">
+              <h2 className="m-0 text-xl font-extrabold text-[#101828] sm:text-2xl">
+                Quando seu brique crescer, o PRO cresce com você
+              </h2>
+              <ProBadge className="text-[11px] px-2 py-1" />
+            </div>
+            <p className="m-0 mx-auto max-w-[560px] text-[14px] leading-relaxed text-[#64748B]">
+              Bree (assistente de IA), loja virtual própria, migração de dados e relatórios
+              avançados — disponíveis quando você quiser dar o próximo passo.
+            </p>
           </div>
         </section>
 
@@ -212,11 +237,24 @@ export default function LandingPage() {
       </main>
 
       <footer className="border-t border-[rgba(15,23,42,0.08)] py-8">
-        <div className="mx-auto flex max-w-[1100px] flex-col items-center gap-2 px-4 text-center lg:px-9">
-          <Logo size={24} textSize={14} />
-          <p className="m-0 text-[13px] text-[#64748B]">
-            Gestão simples para quem revende todos os dias.
-          </p>
+        <div className="mx-auto flex max-w-[1100px] flex-col items-center gap-5 px-4 text-center lg:flex-row lg:items-center lg:justify-between lg:px-9 lg:text-left">
+          <div className="flex flex-col items-center gap-2 lg:items-start">
+            <Logo size={24} textSize={14} />
+            <p className="m-0 text-[13px] text-[#64748B]">
+              Gestão simples para quem revende todos os dias.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 lg:justify-end">
+            <Link href="/termos" className="text-[12.5px] text-[#94A3B8]">
+              Termos de Uso
+            </Link>
+            <Link href="/privacidade" className="text-[12.5px] text-[#94A3B8]">
+              Privacidade
+            </Link>
+            <Link href="mailto:contato@briquegg.site" className="text-[12.5px] text-[#94A3B8]">
+              Contato
+            </Link>
+          </div>
         </div>
       </footer>
     </div>
