@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Store, Lock } from "lucide-react";
+import { Store, Lock, MessageCircle } from "lucide-react";
 import AppShell from "@/components/brique-control/AppShell";
 import PageHeader from "@/components/brique-control/PageHeader";
+import { useBrique } from "@/components/brique-control/BriqueContext";
 import { createClient } from "@/lib/supabase/client";
 
 function ContaContent() {
+  const { isPro } = useBrique();
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState("");
   const [businessName, setBusinessName] = useState("");
@@ -207,6 +209,32 @@ function ContaContent() {
           {passwordMsg && <span className="text-[13px] font-semibold text-[#3FBE7A]">{passwordMsg}</span>}
         </div>
       </div>
+
+      {isPro && (
+        <div
+          className="mt-5 rounded-[20px] bg-white p-6"
+          style={{ border: "1px solid rgba(15,23,42,0.09)" }}
+        >
+          <div className="mb-3 flex items-center gap-2.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#3FBE7A]/10 text-[#3FBE7A]">
+              <MessageCircle size={18} />
+            </div>
+            <div className="text-[15px] font-bold text-[#1D4ED8]">Suporte prioritário PRO</div>
+          </div>
+          <p className="m-0 mb-4 text-[13.5px] text-[#64748B]">
+            Como assinante PRO, você tem uma linha direta com nosso time de suporte.
+          </p>
+          <a
+            href="https://wa.me/5500000000000"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex cursor-pointer items-center gap-2 rounded-[11px] border-none bg-[#3FBE7A] px-5 py-2.5 text-sm font-bold text-white no-underline"
+          >
+            <MessageCircle size={16} />
+            Falar com suporte PRO
+          </a>
+        </div>
+      )}
 
       <div className="h-8" />
     </>

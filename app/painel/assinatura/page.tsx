@@ -1,31 +1,57 @@
 "use client";
 
-import { Check } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Check, Lock } from "lucide-react";
 import AppShell from "@/components/brique-control/AppShell";
 import PageHeader from "@/components/brique-control/PageHeader";
 import ProBadge from "@/components/brique-control/ProBadge";
 import { useBrique } from "@/components/brique-control/BriqueContext";
+import { createClient } from "@/lib/supabase/client";
+import { CURRENT_PRO_PRICE } from "@/lib/proPricing";
 
-const freeFeatures = [
-  "Produtos, vendas e estoque ilimitados",
-  "Controle financeiro (a pagar, a receber, fiado)",
-  "Clientes e fornecedores",
-  "Calculadora de Lucro",
-  "Consulta de IMEI",
-  "Metas de lucro mensais",
-];
+const currency = (v: number) =>
+  v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+const freeFeatures = ["Produtos", "Vendas", "Financeiro"];
 
 const proFeatures = [
-  "Bree — assistente de IA para o seu negócio",
-  "Loja virtual própria",
-  "Migração de dados com IA",
-  "Geração de imagens de anúncio com IA",
-  "Relatórios avançados por categoria e fornecedor",
-  "Painel do Afiliado",
+  "Tudo do plano Grátis",
+  "Clientes",
+  "Fornecedores",
+  "Calculadora de Lucro",
+  "Consulta de IMEI",
+  "Gerador de QR Code PIX",
+  "Ordens de Serviço",
+  "Relatórios Avançados e Exportação",
+  "Backup de Dados",
+  "Multiusuário",
+  "Acesso Antecipado a Novidades",
+  "Separação de Canal de Venda",
+  "Suporte Prioritário",
+  "Proteção contra Reajuste de Preço",
 ];
 
 function AssinaturaContent() {
   const { isPro, openUpgradeModal } = useBrique();
+  const [lockedPrice, setLockedPrice] = useState<number | null>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    (async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data } = await supabase
+        .from("profiles")
+        .select("locked_price")
+        .eq("id", user.id)
+        .single();
+      if (data?.locked_price !== null && data?.locked_price !== undefined) {
+        setLockedPrice(Number(data.locked_price));
+      }
+    })();
+  }, []);
 
   return (
     <>
@@ -75,9 +101,17 @@ function AssinaturaContent() {
               </span>
             )}
           </div>
-          <div className="mb-5 text-[26px] font-extrabold text-[#101828]">
-            Tudo do Free <span className="text-[14px] font-semibold text-[#94A3B8]">+ mais</span>
+          <div className="mb-1 text-[26px] font-extrabold text-[#101828]">
+            {currency(isPro && lockedPrice !== null ? lockedPrice : CURRENT_PRO_PRICE)}
+            <span className="text-[14px] font-semibold text-[#94A3B8]"> /mês</span>
           </div>
+          {isPro && lockedPrice !== null && (
+            <div className="mb-4 flex items-center gap-1.5 text-[12px] font-semibold text-[#1B7A4A]">
+              <Lock size={12} />
+              Preço travado — não muda mesmo se o valor do PRO subir.
+            </div>
+          )}
+          {!isPro && <div className="mb-4" />}
           <ul className="m-0 mb-6 flex list-none flex-col gap-3 p-0">
             {proFeatures.map((f) => (
               <li key={f} className="flex items-start gap-2.5 text-[13.5px] text-[#475467]">

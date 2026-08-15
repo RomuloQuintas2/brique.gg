@@ -1,17 +1,28 @@
 "use client";
 
-import { useState } from "react";
-import { X, User } from "lucide-react";
+import { useEffect, useState } from "react";
+import { X } from "lucide-react";
 import type { Cliente } from "./ClienteCard";
 
-export default function NewClienteModal({
+export type ClienteFormValues = {
+  name: string;
+  phone: string | null;
+  email: string | null;
+  notes: string | null;
+};
+
+export default function ClienteFormModal({
   open,
+  mode,
+  initial,
   onClose,
-  onAdd,
+  onSubmit,
 }: {
   open: boolean;
+  mode: "create" | "edit";
+  initial?: Cliente | null;
   onClose: () => void;
-  onAdd: (cliente: Omit<Cliente, "id">) => Promise<boolean>;
+  onSubmit: (values: ClienteFormValues) => Promise<boolean>;
 }) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -19,6 +30,22 @@ export default function NewClienteModal({
   const [notes, setNotes] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    if (initial) {
+      setName(initial.name);
+      setPhone(initial.phone ?? "");
+      setEmail(initial.email ?? "");
+      setNotes(initial.notes ?? "");
+    } else {
+      setName("");
+      setPhone("");
+      setEmail("");
+      setNotes("");
+    }
+    setError(null);
+  }, [open, initial]);
 
   if (!open) return null;
 
@@ -28,7 +55,7 @@ export default function NewClienteModal({
     if (!canSave) return;
     setSaving(true);
     setError(null);
-    const ok = await onAdd({
+    const ok = await onSubmit({
       name: name.trim(),
       phone: phone.trim() || null,
       email: email.trim() || null,
@@ -39,26 +66,22 @@ export default function NewClienteModal({
       setError("Não foi possível salvar o cliente. Tente novamente.");
       return;
     }
-    setName("");
-    setPhone("");
-    setEmail("");
-    setNotes("");
     onClose();
   };
+
+  const fieldClass = "rounded-[11px] bg-[#F5F7FA] px-3 py-2.5 text-sm text-[#101828]";
+  const fieldStyle = { border: "1px solid rgba(15,23,42,0.15)" };
 
   return (
     <div
       onClick={onClose}
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/55 p-4"
+      className="fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto bg-black/55 p-4 py-8"
     >
       <div
         onClick={(e) => e.stopPropagation()}
         className="w-full max-w-[420px] rounded-[20px] bg-white p-6"
       >
-        <div className="mb-4 flex items-start justify-between">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#3D7FFF]/10 text-[#3D7FFF]">
-            <User size={22} />
-          </div>
+        <div className="mb-4 flex items-start justify-end">
           <button
             onClick={onClose}
             className="cursor-pointer border-none bg-none p-1 text-[#64748B]"
@@ -67,36 +90,38 @@ export default function NewClienteModal({
           </button>
         </div>
 
-        <h2 className="m-0 mb-4 text-lg font-extrabold text-[#1D4ED8]">Novo Cliente</h2>
+        <h2 className="m-0 mb-4 text-lg font-extrabold text-[#1D4ED8]">
+          {mode === "edit" ? "Editar Cliente" : "Novo Cliente"}
+        </h2>
 
         <div className="flex flex-col gap-3">
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Nome do cliente"
-            className="rounded-[11px] bg-[#F5F7FA] px-3 py-2.5 text-sm text-[#101828]"
-            style={{ border: "1px solid rgba(15,23,42,0.15)" }}
+            className={fieldClass}
+            style={fieldStyle}
           />
           <input
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             placeholder="WhatsApp (com DDD)"
-            className="rounded-[11px] bg-[#F5F7FA] px-3 py-2.5 text-sm text-[#101828]"
-            style={{ border: "1px solid rgba(15,23,42,0.15)" }}
+            className={fieldClass}
+            style={fieldStyle}
           />
           <input
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="E-mail (opcional)"
-            className="rounded-[11px] bg-[#F5F7FA] px-3 py-2.5 text-sm text-[#101828]"
-            style={{ border: "1px solid rgba(15,23,42,0.15)" }}
+            className={fieldClass}
+            style={fieldStyle}
           />
           <input
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Observações (opcional)"
-            className="rounded-[11px] bg-[#F5F7FA] px-3 py-2.5 text-sm text-[#101828]"
-            style={{ border: "1px solid rgba(15,23,42,0.15)" }}
+            className={fieldClass}
+            style={fieldStyle}
           />
         </div>
 
@@ -107,7 +132,7 @@ export default function NewClienteModal({
           disabled={!canSave || saving}
           className="mt-5 w-full cursor-pointer rounded-[11px] border-none bg-[#3D7FFF] py-3 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-40"
         >
-          {saving ? "Salvando..." : "Adicionar Cliente"}
+          {saving ? "Salvando..." : mode === "edit" ? "Salvar Alterações" : "Adicionar Cliente"}
         </button>
       </div>
     </div>

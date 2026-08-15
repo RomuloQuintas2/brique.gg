@@ -2,13 +2,15 @@
 
 import { X, Sparkles } from "lucide-react";
 import { useBrique } from "./BriqueContext";
+import { createClient } from "@/lib/supabase/client";
+import { CURRENT_PRO_PRICE } from "@/lib/proPricing";
 
 const benefits = [
-  "Bree — assistente de IA para apoiar suas vendas",
-  "Loja virtual própria para divulgar seus produtos",
-  "Migração de dados com IA a partir de planilhas",
-  "Geração e edição de fotos de produto com IA",
-  "Relatórios avançados por categoria e fornecedor",
+  "Clientes e fornecedores",
+  "Ordens de Serviço",
+  "Gerador de QR Code PIX",
+  "Relatórios avançados e exportação",
+  "Backup de dados e multiusuário",
 ];
 
 export default function UpgradeModal() {
@@ -57,9 +59,28 @@ export default function UpgradeModal() {
         </ul>
 
         <button
-          onClick={() => {
+          onClick={async () => {
             setIsPro(true);
             closeUpgradeModal();
+            const supabase = createClient();
+            const {
+              data: { user },
+            } = await supabase.auth.getUser();
+            if (!user) return;
+            const { data: profile } = await supabase
+              .from("profiles")
+              .select("locked_price")
+              .eq("id", user.id)
+              .single();
+            if (profile && profile.locked_price === null) {
+              await supabase
+                .from("profiles")
+                .update({
+                  locked_price: CURRENT_PRO_PRICE,
+                  subscribed_at: new Date().toISOString().slice(0, 10),
+                })
+                .eq("id", user.id);
+            }
           }}
           className="mb-2 w-full cursor-pointer rounded-[11px] border-none bg-[#3D7FFF] py-3 text-sm font-bold text-white"
         >

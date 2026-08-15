@@ -17,8 +17,8 @@ export default function UpsellCard({ onUpgradeClick }: { onUpgradeClick: () => v
         </div>
       </div>
       <div className="mb-3 text-[13px] leading-[1.5] text-[#64748B]">
-        Bree (IA), loja virtual própria, migração de dados e relatórios avançados por
-        categoria e fornecedor.
+        Clientes, fornecedores, ordens de serviço, QR Code PIX e relatórios avançados —
+        leve seu brique pro próximo nível.
       </div>
       <button
         onClick={onUpgradeClick}

@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
-import { Agentation } from "agentation";
 import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -42,7 +41,6 @@ export default function RootLayout({
     <html lang="pt-BR" className={plusJakartaSans.variable}>
       <body style={{ fontFamily: "var(--font-jakarta), -apple-system, sans-serif" }}>
         {children}
-        {process.env.NODE_ENV === "development" && <Agentation />}
       </body>
     </html>
   );

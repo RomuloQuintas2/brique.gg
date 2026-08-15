@@ -1,6 +1,9 @@
 "use client";
 
-import { createContext, useContext, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createClient } from "@/lib/supabase/client";
+
+export type UserRole = "admin" | "funcionario";
 
 type BriqueContextValue = {
   isPro: boolean;
@@ -8,6 +11,7 @@ type BriqueContextValue = {
   upgradeModalOpen: boolean;
   openUpgradeModal: () => void;
   closeUpgradeModal: () => void;
+  role: UserRole;
 };
 
 const BriqueContext = createContext<BriqueContextValue | null>(null);
@@ -15,6 +19,23 @@ const BriqueContext = createContext<BriqueContextValue | null>(null);
 export function BriqueProvider({ children }: { children: ReactNode }) {
   const [isPro, setIsPro] = useState(false);
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
+  const [role, setRole] = useState<UserRole>("admin");
+
+  useEffect(() => {
+    const supabase = createClient();
+    (async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+      if (data?.role === "funcionario") setRole("funcionario");
+    })();
+  }, []);
 
   return (
     <BriqueContext.Provider
@@ -24,6 +45,7 @@ export function BriqueProvider({ children }: { children: ReactNode }) {
         upgradeModalOpen,
         openUpgradeModal: () => setUpgradeModalOpen(true),
         closeUpgradeModal: () => setUpgradeModalOpen(false),
+        role,
       }}
     >
       {children}

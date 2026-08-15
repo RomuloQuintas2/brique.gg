@@ -14,11 +14,15 @@ export default function BottomNav({
   activeNav,
   moreOpen,
   onOpenMore,
+  onlyKeys,
 }: {
   activeNav: string;
   moreOpen: boolean;
   onOpenMore: () => void;
+  onlyKeys?: string[];
 }) {
+  const visibleItems = onlyKeys ? items.filter((i) => onlyKeys.includes(i.key)) : items;
+
   return (
     <nav
       className="fixed inset-x-0 bottom-0 z-40 flex items-stretch bg-white lg:hidden"
@@ -27,7 +31,7 @@ export default function BottomNav({
         paddingBottom: "env(safe-area-inset-bottom)",
       }}
     >
-      {items.map((item) => {
+      {visibleItems.map((item) => {
         const Icon = item.icon;
         const active = activeNav === item.key;
         return (

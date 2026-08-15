@@ -5,20 +5,29 @@ import { Plus, Search } from "lucide-react";
 import AppShell from "@/components/brique-control/AppShell";
 import PageHeader from "@/components/brique-control/PageHeader";
 import FornecedorCard, { type Fornecedor } from "@/components/brique-control/FornecedorCard";
-import NewFornecedorModal from "@/components/brique-control/NewFornecedorModal";
+import FornecedorFormModal, {
+  type FornecedorFormValues,
+} from "@/components/brique-control/FornecedorFormModal";
+import ConfirmDialog from "@/components/brique-control/ConfirmDialog";
 import { createClient } from "@/lib/supabase/client";
+
+const SELECT_FIELDS = "id, name, phone, category, notes";
 
 function FornecedoresContent() {
   const [fornecedores, setFornecedores] = useState<Fornecedor[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
-  const [modalOpen, setModalOpen] = useState(false);
+
+  const [formOpen, setFormOpen] = useState(false);
+  const [editingFornecedor, setEditingFornecedor] = useState<Fornecedor | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Fornecedor | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
     supabase
       .from("fornecedores")
-      .select("id, name, phone, category, notes")
+      .select(SELECT_FIELDS)
       .order("created_at", { ascending: false })
       .then(({ data }) => {
         setFornecedores(data ?? []);
@@ -26,7 +35,7 @@ function FornecedoresContent() {
       });
   }, []);
 
-  const addFornecedor = async (fornecedor: Omit<Fornecedor, "id">): Promise<boolean> => {
+  const addFornecedor = async (values: FornecedorFormValues): Promise<boolean> => {
     const supabase = createClient();
     const {
       data: { user },
@@ -35,14 +44,40 @@ function FornecedoresContent() {
 
     const { data, error } = await supabase
       .from("fornecedores")
-      .insert({ ...fornecedor, user_id: user.id })
-      .select("id, name, phone, category, notes")
+      .insert({ ...values, user_id: user.id })
+      .select(SELECT_FIELDS)
       .single();
 
     if (error || !data) return false;
-
     setFornecedores((prev) => [data, ...prev]);
     return true;
+  };
+
+  const editFornecedor = async (values: FornecedorFormValues): Promise<boolean> => {
+    if (!editingFornecedor) return false;
+    const supabase = createClient();
+
+    const { data, error } = await supabase
+      .from("fornecedores")
+      .update(values)
+      .eq("id", editingFornecedor.id)
+      .select(SELECT_FIELDS)
+      .single();
+
+    if (error || !data) return false;
+    setFornecedores((prev) => prev.map((f) => (f.id === data.id ? data : f)));
+    return true;
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    const supabase = createClient();
+    const { error } = await supabase.from("fornecedores").delete().eq("id", deleteTarget.id);
+    setDeleting(false);
+    if (error) return;
+    setFornecedores((prev) => prev.filter((f) => f.id !== deleteTarget.id));
+    setDeleteTarget(null);
   };
 
   const filtered = fornecedores.filter((f) =>
@@ -67,7 +102,10 @@ function FornecedoresContent() {
           />
         </div>
         <button
-          onClick={() => setModalOpen(true)}
+          onClick={() => {
+            setEditingFornecedor(null);
+            setFormOpen(true);
+          }}
           className="flex flex-shrink-0 cursor-pointer items-center gap-1.5 rounded-full border-none bg-[#3D7FFF] px-4 py-2.5 text-[13.5px] font-bold text-white"
         >
           <Plus size={16} />
@@ -95,16 +133,37 @@ function FornecedoresContent() {
             Nenhum fornecedor encontrado.
           </div>
         ) : (
-          filtered.map((f) => <FornecedorCard key={f.id} fornecedor={f} />)
+          filtered.map((f) => (
+            <FornecedorCard
+              key={f.id}
+              fornecedor={f}
+              onEdit={() => {
+                setEditingFornecedor(f);
+                setFormOpen(true);
+              }}
+              onDelete={() => setDeleteTarget(f)}
+            />
+          ))
         )}
       </div>
 
       <div className="h-8" />
 
-      <NewFornecedorModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onAdd={addFornecedor}
+      <FornecedorFormModal
+        open={formOpen}
+        mode={editingFornecedor ? "edit" : "create"}
+        initial={editingFornecedor}
+        onClose={() => setFormOpen(false)}
+        onSubmit={editingFornecedor ? editFornecedor : addFornecedor}
+      />
+
+      <ConfirmDialog
+        open={!!deleteTarget}
+        title="Excluir fornecedor?"
+        description={`Isso vai remover "${deleteTarget?.name}" permanentemente. Essa ação não pode ser desfeita.`}
+        loading={deleting}
+        onCancel={() => setDeleteTarget(null)}
+        onConfirm={confirmDelete}
       />
     </>
   );

@@ -14,6 +14,7 @@ export default function Sidebar({
   onLogout,
   side = "left",
   hideKeys = [],
+  onlyKeys,
 }: {
   open: boolean;
   onClose: () => void;
@@ -22,6 +23,7 @@ export default function Sidebar({
   onLogout: () => void;
   side?: "left" | "right";
   hideKeys?: string[];
+  onlyKeys?: string[];
 }) {
   const { isPro, openUpgradeModal } = useBrique();
   const isRight = side === "right";
@@ -29,7 +31,9 @@ export default function Sidebar({
   const visibleGroups = navGroups
     .map((group) => ({
       ...group,
-      items: group.items.filter((item) => !hideKeys.includes(item.key)),
+      items: group.items.filter(
+        (item) => !hideKeys.includes(item.key) && (!onlyKeys || onlyKeys.includes(item.key))
+      ),
     }))
     .filter((group) => group.items.length > 0);
 
@@ -90,7 +94,8 @@ export default function Sidebar({
               Desbloqueie o PRO
             </div>
             <div className="mb-2.5 text-xs leading-[1.4] text-[#64748B]">
-              IA, loja virtual e relatórios avançados.
+              Clientes, fornecedores, OS, PIX automático e muito mais — leve seu brique pro
+              próximo nível.
             </div>
             <button
               onClick={openUpgradeModal}

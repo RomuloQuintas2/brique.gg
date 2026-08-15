@@ -7,13 +7,13 @@ import {
   Truck,
   Calculator,
   Search,
-  MessageCircle,
-  Store,
-  RefreshCw,
-  ImageIcon,
-  Share2,
   Settings,
   CreditCard,
+  QrCode,
+  Wrench,
+  FileBarChart,
+  UsersRound,
+  HardDriveDownload,
   type LucideIcon,
 } from "lucide-react";
 
@@ -22,6 +22,7 @@ export type NavItem = {
   label: string;
   icon: LucideIcon;
   pro?: boolean;
+  isNew?: boolean;
 };
 
 export type NavGroup = {
@@ -40,22 +41,17 @@ export const navGroups: NavGroup[] = [
     ],
   },
   {
-    label: "Utilitários",
+    label: "Recursos PRO",
     items: [
       { key: "clientes", label: "Clientes", icon: Users, pro: true },
       { key: "fornecedores", label: "Fornecedores", icon: Truck, pro: true },
       { key: "calc", label: "Calculadora de Lucro", icon: Calculator, pro: true },
       { key: "imei", label: "Consulta de IMEI", icon: Search, pro: true },
-    ],
-  },
-  {
-    label: "Recursos PRO",
-    items: [
-      { key: "bree", label: "Bree — Assistente IA", icon: MessageCircle, pro: true },
-      { key: "loja", label: "Loja Virtual", icon: Store, pro: true },
-      { key: "migracao", label: "Migração com IA", icon: RefreshCw, pro: true },
-      { key: "imagens", label: "Imagens com IA", icon: ImageIcon, pro: true },
-      { key: "afiliado", label: "Painel do Afiliado", icon: Share2, pro: true },
+      { key: "pix", label: "Gerador de QR PIX", icon: QrCode, pro: true, isNew: true },
+      { key: "os", label: "Ordens de Serviço", icon: Wrench, pro: true, isNew: true },
+      { key: "relatorios", label: "Relatórios Avançados", icon: FileBarChart, pro: true, isNew: true },
+      { key: "backup", label: "Backup de Dados", icon: HardDriveDownload, pro: true, isNew: true },
+      { key: "equipe", label: "Multiusuário", icon: UsersRound, pro: true, isNew: true },
     ],
   },
   {

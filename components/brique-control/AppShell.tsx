@@ -2,13 +2,16 @@
 
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { BriqueProvider } from "./BriqueContext";
+import { BriqueProvider, useBrique } from "./BriqueContext";
 import Sidebar from "./Sidebar";
 import MobileTopBar from "./MobileTopBar";
 import BottomNav from "./BottomNav";
 import UpgradeModal from "./UpgradeModal";
 import DevProToggle from "./DevProToggle";
+import ImeiRedirectModal from "./ImeiRedirectModal";
 import { createClient } from "@/lib/supabase/client";
+
+const FUNCIONARIO_KEYS = ["produtos", "vendas"];
 
 const ROUTE_FOR_KEY: Record<string, string> = {
   inicio: "/painel",
@@ -18,9 +21,13 @@ const ROUTE_FOR_KEY: Record<string, string> = {
   clientes: "/painel/clientes",
   fornecedores: "/painel/fornecedores",
   calc: "/painel/calculadora",
-  imei: "/painel/imei",
+  pix: "/painel/pix",
+  os: "/painel/os",
+  relatorios: "/painel/relatorios",
   config: "/painel/conta",
   assinatura: "/painel/assinatura",
+  equipe: "/painel/equipe",
+  backup: "/painel/backup",
 };
 
 function keyForPathname(pathname: string) {
@@ -30,9 +37,12 @@ function keyForPathname(pathname: string) {
 
 function AppShellInner({ children }: { children: React.ReactNode }) {
   const [moreOpen, setMoreOpen] = useState(false);
+  const [imeiModalOpen, setImeiModalOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const activeNav = keyForPathname(pathname);
+  const { role } = useBrique();
+  const onlyKeys = role === "funcionario" ? FUNCIONARIO_KEYS : undefined;
 
   const handleLogout = async () => {
     const supabase = createClient();
@@ -43,6 +53,10 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
 
   const handleSelectNav = (key: string) => {
     setMoreOpen(false);
+    if (key === "imei") {
+      setImeiModalOpen(true);
+      return;
+    }
     const route = ROUTE_FOR_KEY[key];
     if (route) router.push(route);
   };
@@ -58,6 +72,7 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
         onSelectNav={handleSelectNav}
         onLogout={handleLogout}
         side="left"
+        onlyKeys={onlyKeys}
       />
 
       <Sidebar
@@ -67,6 +82,7 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
         onSelectNav={handleSelectNav}
         onLogout={handleLogout}
         side="right"
+        onlyKeys={onlyKeys}
       />
 
       <main className="max-w-[1100px] px-4 pt-4 pb-24 lg:ml-[260px] lg:px-9 lg:pt-9 lg:pb-4">
@@ -78,10 +94,12 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
           activeNav={activeNav}
           moreOpen={moreOpen}
           onOpenMore={() => setMoreOpen(true)}
+          onlyKeys={onlyKeys}
         />
       )}
 
       <UpgradeModal />
+      <ImeiRedirectModal open={imeiModalOpen} onClose={() => setImeiModalOpen(false)} />
       <DevProToggle />
     </div>
   );

@@ -160,8 +160,8 @@ export default function LandingPage() {
                 cadastrou. Aqui não. O plano gratuito do brique.gg é
                 permanente — você pode gerenciar produtos, vendas, estoque e
                 financeiro sem nunca precisar assinar nada. O PRO existe pra
-                quem quer ir além (IA, loja virtual, relatórios avançados),
-                não pra travar o básico.
+                quem quer ir além (clientes, fornecedores, ordens de serviço,
+                relatórios avançados), não pra travar o básico.
               </p>
             </div>
           </div>
@@ -205,8 +205,9 @@ export default function LandingPage() {
               <ProBadge className="text-[11px] px-2 py-1" />
             </div>
             <p className="m-0 mx-auto max-w-[560px] text-[14px] leading-relaxed text-[#64748B]">
-              Bree (assistente de IA), loja virtual própria, migração de dados e relatórios
-              avançados — disponíveis quando você quiser dar o próximo passo.
+              Clientes, fornecedores, ordens de serviço, QR Code PIX, relatórios avançados e
+              muito mais — por R$ 19,90/mês, disponíveis quando você quiser dar o próximo
+              passo.
             </p>
           </div>
         </section>

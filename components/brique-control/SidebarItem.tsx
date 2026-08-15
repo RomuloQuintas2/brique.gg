@@ -40,6 +40,11 @@ export default function SidebarItem({
         <Icon size={18} strokeWidth={1.8} />
       </span>
       <span className="flex-1">{item.label}</span>
+      {item.isNew && (
+        <span className="rounded-md bg-[#3FBE7A]/15 px-1.5 py-0.5 text-[9.5px] font-extrabold tracking-wide text-[#1B7A4A]">
+          NOVO
+        </span>
+      )}
       {item.pro && <ProBadge />}
     </a>
   );
