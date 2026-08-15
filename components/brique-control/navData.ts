@@ -13,7 +13,6 @@ import {
   ImageIcon,
   Share2,
   Settings,
-  BookOpen,
   CreditCard,
   type LucideIcon,
 } from "lucide-react";
@@ -38,15 +37,15 @@ export const navGroups: NavGroup[] = [
       { key: "produtos", label: "Produtos", icon: Package },
       { key: "vendas", label: "Vendas", icon: Tag },
       { key: "financeiro", label: "Financeiro", icon: Wallet },
-      { key: "clientes", label: "Clientes", icon: Users },
-      { key: "fornecedores", label: "Fornecedores", icon: Truck },
     ],
   },
   {
     label: "Utilitários",
     items: [
-      { key: "calc", label: "Calculadora de Lucro", icon: Calculator },
-      { key: "imei", label: "Consulta de IMEI", icon: Search },
+      { key: "clientes", label: "Clientes", icon: Users, pro: true },
+      { key: "fornecedores", label: "Fornecedores", icon: Truck, pro: true },
+      { key: "calc", label: "Calculadora de Lucro", icon: Calculator, pro: true },
+      { key: "imei", label: "Consulta de IMEI", icon: Search, pro: true },
     ],
   },
   {
@@ -63,7 +62,6 @@ export const navGroups: NavGroup[] = [
     label: "Conta",
     items: [
       { key: "config", label: "Configuração da Conta", icon: Settings },
-      { key: "tutoriais", label: "Tutoriais", icon: BookOpen },
       { key: "assinatura", label: "Assinatura", icon: CreditCard },
     ],
   },

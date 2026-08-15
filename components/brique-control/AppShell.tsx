@@ -20,11 +20,8 @@ const ROUTE_FOR_KEY: Record<string, string> = {
   calc: "/painel/calculadora",
   imei: "/painel/imei",
   config: "/painel/conta",
-  tutoriais: "/painel/tutoriais",
   assinatura: "/painel/assinatura",
 };
-
-const BOTTOM_NAV_KEYS = ["inicio", "produtos", "vendas", "financeiro"];
 
 function keyForPathname(pathname: string) {
   const entry = Object.entries(ROUTE_FOR_KEY).find(([, path]) => path === pathname);
@@ -70,18 +67,19 @@ function AppShellInner({ children }: { children: React.ReactNode }) {
         onSelectNav={handleSelectNav}
         onLogout={handleLogout}
         side="right"
-        hideKeys={BOTTOM_NAV_KEYS}
       />
 
       <main className="max-w-[1100px] px-4 pt-4 pb-24 lg:ml-[260px] lg:px-9 lg:pt-9 lg:pb-4">
         {children}
       </main>
 
-      <BottomNav
-        activeNav={activeNav}
-        moreOpen={moreOpen}
-        onOpenMore={() => setMoreOpen(true)}
-      />
+      {!moreOpen && (
+        <BottomNav
+          activeNav={activeNav}
+          moreOpen={moreOpen}
+          onOpenMore={() => setMoreOpen(true)}
+        />
+      )}
 
       <UpgradeModal />
       <DevProToggle />
