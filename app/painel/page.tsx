@@ -8,10 +8,13 @@ import PeriodFilter from "@/components/brique-control/PeriodFilter";
 import MetricsOverview from "@/components/brique-control/MetricsOverview";
 import GoalCard from "@/components/brique-control/GoalCard";
 import SalesChart, { type SalesChartPoint } from "@/components/brique-control/SalesChart";
-import SalesPlatformsCard from "@/components/brique-control/SalesPlatformsCard";
+import SalesPlatformsCard, {
+  type PlatformCount,
+} from "@/components/brique-control/SalesPlatformsCard";
 import UpsellCard from "@/components/brique-control/UpsellCard";
 import { useBrique } from "@/components/brique-control/BriqueContext";
 import { createClient } from "@/lib/supabase/client";
+import { getDateRange, toLocalISODate } from "@/lib/dateRange";
 
 const currency = (v: number) =>
   v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -30,40 +33,7 @@ function lastSixMonths() {
   return months;
 }
 
-function toLocalISODate(d: Date) {
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
-  return `${yyyy}-${mm}-${dd}`;
-}
-
-function getDateRange(period: string, customStart: string, customEnd: string) {
-  const now = new Date();
-  const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
-
-  if (period === "7d") {
-    return {
-      start: new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6),
-      end: endOfToday,
-    };
-  }
-  if (period === "30d") {
-    return {
-      start: new Date(now.getFullYear(), now.getMonth(), now.getDate() - 29),
-      end: endOfToday,
-    };
-  }
-  if (period === "custom") {
-    return {
-      start: customStart ? new Date(`${customStart}T00:00:00`) : new Date(now.getFullYear(), 0, 1),
-      end: customEnd ? new Date(`${customEnd}T23:59:59`) : endOfToday,
-    };
-  }
-  // "ano" — desde 1 de janeiro
-  return { start: new Date(now.getFullYear(), 0, 1), end: endOfToday };
-}
-
-type RawSale = { value: number; profit: number; created_at: string };
+type RawSale = { value: number; profit: number; sale_date: string; platform: string | null };
 
 function HomeContent() {
   const today = new Date();
@@ -92,7 +62,7 @@ function HomeContent() {
       const [{ data: profile }, { data: products }, { data: sales }] = await Promise.all([
         supabase.from("profiles").select("business_name").eq("id", user.id).single(),
         supabase.from("products").select("price, stock"),
-        supabase.from("sales").select("value, profit, created_at"),
+        supabase.from("sales").select("value, profit, sale_date, platform"),
       ]);
 
       setFirstName((profile?.business_name || "").trim().split(" ")[0] || "");
@@ -104,7 +74,8 @@ function HomeContent() {
       const saleList = (sales ?? []).map((s) => ({
         value: Number(s.value),
         profit: Number(s.profit),
-        created_at: s.created_at,
+        sale_date: s.sale_date,
+        platform: s.platform,
       }));
       setRawSales(saleList);
 
@@ -113,7 +84,7 @@ function HomeContent() {
           label,
           value: saleList
             .filter((s) => {
-              const d = new Date(s.created_at);
+              const d = new Date(s.sale_date);
               return d.getFullYear() === year && d.getMonth() === month;
             })
             .reduce((sum, s) => sum + s.value, 0),
@@ -132,7 +103,7 @@ function HomeContent() {
   const filteredSales = useMemo(
     () =>
       rawSales.filter((s) => {
-        const d = new Date(s.created_at);
+        const d = new Date(s.sale_date);
         return d >= start && d <= end;
       }),
     [rawSales, start, end]
@@ -147,11 +118,20 @@ function HomeContent() {
     const now = new Date();
     return rawSales
       .filter((s) => {
-        const d = new Date(s.created_at);
+        const d = new Date(s.sale_date);
         return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
       })
       .reduce((sum, s) => sum + s.profit, 0);
   }, [rawSales]);
+
+  const platformCounts: PlatformCount[] = useMemo(() => {
+    const counts = new Map<string, number>();
+    filteredSales.forEach((s) => {
+      if (!s.platform) return;
+      counts.set(s.platform, (counts.get(s.platform) ?? 0) + 1);
+    });
+    return Array.from(counts.entries()).map(([platform, count]) => ({ platform, count }));
+  }, [filteredSales]);
 
   return (
     <>
@@ -191,7 +171,7 @@ function HomeContent() {
 
       <SalesChart data={chartData} />
 
-      <SalesPlatformsCard data={[]} />
+      <SalesPlatformsCard data={platformCounts} />
 
       <div className="grid grid-cols-1 gap-3.5 [grid-template-columns:repeat(auto-fit,minmax(260px,1fr))]">
         <UpsellCard onUpgradeClick={openUpgradeModal} />

@@ -41,18 +41,25 @@ export default function ProductCard({
   const profit = product.price - total;
   const margin = product.price > 0 ? Math.round((profit / product.price) * 100) : 0;
   const acquired = formatDate(product.acquisition_date);
+  const soldOut = product.stock <= 0;
 
   return (
     <div
       className="flex flex-wrap items-center gap-4 rounded-2xl bg-white p-4"
-      style={{ border: "1px solid rgba(15,23,42,0.09)" }}
+      style={{ border: "1px solid rgba(15,23,42,0.09)", opacity: soldOut ? 0.65 : 1 }}
     >
       <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-[#4C8DFF]/10 text-2xl">
         {product.icon}
       </div>
 
       <div className="min-w-[160px] flex-1">
-        <div className="truncate text-[15px] font-bold text-[#101828]">{product.name}</div>
+        <div
+          className={`truncate text-[15px] font-bold text-[#101828] ${
+            soldOut ? "line-through decoration-2" : ""
+          }`}
+        >
+          {product.name}
+        </div>
         <div className="truncate text-[13px] text-[#64748B]">
           {acquired ? `Comprado em ${acquired} · ` : ""}Custo total: {currency(total)}
         </div>
@@ -64,20 +71,27 @@ export default function ProductCard({
         </div>
       </div>
 
-      <div className="flex-shrink-0 rounded-full bg-[#F1F4F9] px-3 py-1 text-xs font-bold text-[#5B6472]">
-        {product.stock} un.
-      </div>
+      {soldOut ? (
+        <div className="flex-shrink-0 rounded-full bg-[rgba(224,91,91,0.12)] px-3 py-1 text-xs font-bold text-[#E05B5B]">
+          Vendido
+        </div>
+      ) : (
+        <div className="flex-shrink-0 rounded-full bg-[#F1F4F9] px-3 py-1 text-xs font-bold text-[#5B6472]">
+          {product.stock} un.
+        </div>
+      )}
 
       <div className="flex flex-shrink-0 flex-wrap items-center gap-1.5">
-        <button
-          onClick={onSell}
-          disabled={product.stock <= 0}
-          className="flex cursor-pointer items-center gap-1.5 rounded-full border-none px-3 py-1.5 text-xs font-bold text-[#3FBE7A] disabled:cursor-not-allowed disabled:opacity-30"
-          style={{ background: "rgba(63,190,122,0.12)" }}
-        >
-          <DollarSign size={14} />
-          Vender
-        </button>
+        {!soldOut && (
+          <button
+            onClick={onSell}
+            className="flex cursor-pointer items-center gap-1.5 rounded-full border-none px-3 py-1.5 text-xs font-bold text-[#3FBE7A]"
+            style={{ background: "rgba(63,190,122,0.12)" }}
+          >
+            <DollarSign size={14} />
+            Vender
+          </button>
+        )}
         <button
           onClick={onEdit}
           className="flex cursor-pointer items-center gap-1.5 rounded-full border-none px-3 py-1.5 text-xs font-bold text-[#3D7FFF]"

@@ -107,16 +107,13 @@ export default function ProductFormModal({
   return (
     <div
       onClick={onClose}
-      className="fixed inset-0 z-[60] flex items-center justify-center overflow-y-auto bg-black/55 p-4 py-8"
+      className="fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto bg-black/55 p-4 py-8"
     >
       <div
         onClick={(e) => e.stopPropagation()}
         className="w-full max-w-[460px] rounded-[20px] bg-white p-6"
       >
-        <div className="mb-4 flex items-start justify-between">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#3D7FFF]/10 text-2xl">
-            {icon}
-          </div>
+        <div className="mb-4 flex items-start justify-end">
           <button
             onClick={onClose}
             className="cursor-pointer border-none bg-none p-1 text-[#64748B]"

@@ -9,19 +9,23 @@ export default function FinanceListRow({
   value,
   status,
   tone,
+  actionLabel,
+  onAction,
 }: {
   title: string;
   subtitle: string;
   value: number;
   status: string;
   tone: StatusTone;
+  actionLabel?: string;
+  onAction?: () => void;
 }) {
   return (
     <div
-      className="flex items-center justify-between gap-4 rounded-2xl bg-white p-4"
+      className="flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-white p-4"
       style={{ border: "1px solid rgba(15,23,42,0.09)" }}
     >
-      <div className="min-w-0">
+      <div className="min-w-0 flex-1">
         <div className="truncate text-sm font-bold text-[#101828]">{title}</div>
         <div className="text-xs text-[#64748B]">{subtitle}</div>
       </div>
@@ -29,6 +33,15 @@ export default function FinanceListRow({
         <div className="text-sm font-extrabold text-[#101828]">{currency(value)}</div>
         <StatusPill label={status} tone={tone} />
       </div>
+      {onAction && (
+        <button
+          onClick={onAction}
+          className="flex w-full cursor-pointer items-center justify-center rounded-full border-none px-3 py-1.5 text-xs font-bold text-[#3FBE7A]"
+          style={{ background: "rgba(63,190,122,0.12)" }}
+        >
+          {actionLabel}
+        </button>
+      )}
     </div>
   );
 }

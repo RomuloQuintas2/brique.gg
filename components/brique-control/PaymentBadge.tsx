@@ -1,10 +1,9 @@
-export type PaymentMethod = "Pix" | "Dinheiro" | "Cartão 1x" | "Cartão 2x" | "Fiado";
+export type PaymentMethod = "Pix" | "Dinheiro" | "Cartão" | "Fiado";
 
 const STYLES: Record<PaymentMethod, { bg: string; color: string }> = {
   Pix: { bg: "rgba(63,190,122,0.15)", color: "#1B7A4A" },
   Dinheiro: { bg: "rgba(15,23,42,0.06)", color: "#475467" },
-  "Cartão 1x": { bg: "rgba(76,141,255,0.15)", color: "#1A4FBF" },
-  "Cartão 2x": { bg: "rgba(76,141,255,0.15)", color: "#1A4FBF" },
+  Cartão: { bg: "rgba(76,141,255,0.15)", color: "#1A4FBF" },
   Fiado: { bg: "rgba(242,201,76,0.22)", color: "#8A5710" },
 };
 

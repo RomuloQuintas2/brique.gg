@@ -1,45 +1,80 @@
 "use client";
 
-import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { useState } from "react";
+import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-const data = [
-  { label: "15/04", faturamento: 1200, investimento: 800, lucro: 400 },
-  { label: "22/04", faturamento: 1850, investimento: 1100, lucro: 750 },
-  { label: "29/04", faturamento: 1400, investimento: 950, lucro: 450 },
-  { label: "06/05", faturamento: 2100, investimento: 1300, lucro: 800 },
-];
+export type FinancePerformancePoint = {
+  label: string;
+  recebido: number;
+  aReceber: number;
+  contasAPagar: number;
+};
+
+const PERIODS = [
+  { key: "3m", label: "3m", months: 3 },
+  { key: "6m", label: "6m", months: 6 },
+  { key: "12m", label: "12m", months: 12 },
+] as const;
 
 const legend = [
-  { key: "faturamento", label: "Faturamento", color: "#4C8DFF" },
-  { key: "investimento", label: "Investimento", color: "#94A3B8" },
-  { key: "lucro", label: "Lucro", color: "#3FBE7A" },
+  { key: "recebido", label: "Recebido", color: "#3FBE7A" },
+  { key: "aReceber", label: "A Receber", color: "#4C8DFF" },
+  { key: "contasAPagar", label: "Contas a Pagar", color: "#E05B5B" },
 ];
 
-export default function FinancePerformanceChart() {
+export default function FinancePerformanceChart({ data }: { data: FinancePerformancePoint[] }) {
+  const [period, setPeriod] = useState<(typeof PERIODS)[number]["key"]>("6m");
+  const months = PERIODS.find((p) => p.key === period)!.months;
+  const sliced = data.slice(-months);
+
   return (
     <div
       className="mb-[22px] rounded-[20px] bg-white p-[22px]"
       style={{ border: "1px solid rgba(15,23,42,0.09)" }}
     >
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <div className="text-[15px] font-bold text-[#1D4ED8]">Performance Financeira</div>
-        <div className="flex items-center gap-3">
-          {legend.map((l) => (
-            <div key={l.key} className="flex items-center gap-1.5 text-[12px] font-semibold text-[#64748B]">
-              <span className="h-2 w-2 rounded-full" style={{ background: l.color }} />
-              {l.label}
-            </div>
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div className="text-[15px] font-bold text-[#1D4ED8]">
+          Performance Financeira do Negócio
+        </div>
+        <div className="flex gap-1">
+          {PERIODS.map((p) => (
+            <button
+              key={p.key}
+              onClick={() => setPeriod(p.key)}
+              className={`cursor-pointer rounded-full px-3 py-1.5 text-[12px] font-bold ${
+                period === p.key ? "bg-[#3D7FFF] text-white" : "bg-[#F5F7FA] text-[#5B6472]"
+              }`}
+              style={{ border: `1px solid ${period === p.key ? "#3D7FFF" : "rgba(15,23,42,0.12)"}` }}
+            >
+              {p.label}
+            </button>
           ))}
         </div>
       </div>
-      <div className="h-[180px]">
+
+      <div className="mb-4 flex items-center gap-3">
+        {legend.map((l) => (
+          <div key={l.key} className="flex items-center gap-1.5 text-[12px] font-semibold text-[#64748B]">
+            <span className="h-2 w-2 rounded-full" style={{ background: l.color }} />
+            {l.label}
+          </div>
+        ))}
+      </div>
+
+      <div className="h-[200px]">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 0, right: 4, left: 4, bottom: 0 }} barGap={4}>
+          <AreaChart data={sliced} margin={{ top: 4, right: 4, left: 4, bottom: 0 }}>
+            <defs>
+              <linearGradient id="fillRecebido" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#3FBE7A" stopOpacity={0.35} />
+                <stop offset="95%" stopColor="#3FBE7A" stopOpacity={0.02} />
+              </linearGradient>
+            </defs>
             <XAxis
               dataKey="label"
               axisLine={false}
               tickLine={false}
-              tick={{ fontSize: 11.5, fontWeight: 600, fill: "#6B7280" }}
+              tick={{ fontSize: 11, fontWeight: 600, fill: "#6B7280" }}
               dy={8}
             />
             <YAxis hide domain={[0, "dataMax"]} />
@@ -52,10 +87,31 @@ export default function FinancePerformanceChart() {
                 fontSize: 12.5,
               }}
             />
-            <Bar dataKey="faturamento" fill="#4C8DFF" radius={[6, 6, 0, 0]} maxBarSize={18} isAnimationActive={false} />
-            <Bar dataKey="investimento" fill="#94A3B8" radius={[6, 6, 0, 0]} maxBarSize={18} isAnimationActive={false} />
-            <Bar dataKey="lucro" fill="#3FBE7A" radius={[6, 6, 0, 0]} maxBarSize={18} isAnimationActive={false} />
-          </BarChart>
+            <Area
+              type="monotone"
+              dataKey="recebido"
+              stroke="#3FBE7A"
+              strokeWidth={2.5}
+              fill="url(#fillRecebido)"
+              isAnimationActive={false}
+            />
+            <Area
+              type="monotone"
+              dataKey="aReceber"
+              stroke="#4C8DFF"
+              strokeWidth={2}
+              fill="none"
+              isAnimationActive={false}
+            />
+            <Area
+              type="monotone"
+              dataKey="contasAPagar"
+              stroke="#E05B5B"
+              strokeWidth={2}
+              fill="none"
+              isAnimationActive={false}
+            />
+          </AreaChart>
         </ResponsiveContainer>
       </div>
     </div>

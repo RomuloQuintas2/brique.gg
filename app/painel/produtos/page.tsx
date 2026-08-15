@@ -6,10 +6,9 @@ import AppShell from "@/components/brique-control/AppShell";
 import PageHeader from "@/components/brique-control/PageHeader";
 import ProductCard, { type Product } from "@/components/brique-control/ProductCard";
 import ProductFormModal, { type ProductFormValues } from "@/components/brique-control/ProductFormModal";
-import SellProductModal from "@/components/brique-control/SellProductModal";
+import SellProductModal, { type SaleSubmission } from "@/components/brique-control/SellProductModal";
 import ConfirmDialog from "@/components/brique-control/ConfirmDialog";
 import { createClient } from "@/lib/supabase/client";
-import type { PaymentMethod } from "@/components/brique-control/PaymentBadge";
 
 const SELECT_FIELDS = "id, icon, name, cost, price, stock, acquisition_date, extra_costs";
 
@@ -35,10 +34,13 @@ function mapRow(p: {
   };
 }
 
+type Tab = "disponiveis" | "vendidos";
+
 function ProdutosContent() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
+  const [tab, setTab] = useState<Tab>("disponiveis");
 
   const [formOpen, setFormOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -104,7 +106,7 @@ function ProdutosContent() {
     setDeleteTarget(null);
   };
 
-  const sellProduct = async (value: number, method: PaymentMethod): Promise<boolean> => {
+  const sellProduct = async (submission: SaleSubmission): Promise<boolean> => {
     if (!sellTarget) return false;
     const supabase = createClient();
     const {
@@ -112,14 +114,20 @@ function ProdutosContent() {
     } = await supabase.auth.getUser();
     if (!user) return false;
 
-    const cost = sellTarget.cost + sellTarget.extra_costs.reduce((s, e) => s + e.value, 0);
-
     const { error: saleError } = await supabase.from("sales").insert({
       user_id: user.id,
       product_name: sellTarget.name,
-      value,
-      profit: value - cost,
-      payment_method: method,
+      value: submission.value,
+      profit: submission.profit,
+      payment_method: submission.method,
+      sale_date: submission.saleDate,
+      platform: submission.platform,
+      client_name: submission.clientName,
+      trade_in_description: submission.tradeInDescription,
+      trade_in_value: submission.tradeInValue,
+      extra_costs: submission.extraCosts,
+      fiado_due_date: submission.fiadoDueDate,
+      fiado_down_payment: submission.fiadoDownPayment,
     });
     if (saleError) return false;
 
@@ -136,7 +144,10 @@ function ProdutosContent() {
     return true;
   };
 
-  const filtered = products.filter((p) =>
+  const availableProducts = products.filter((p) => p.stock > 0);
+  const soldProducts = products.filter((p) => p.stock <= 0);
+
+  const filtered = (tab === "disponiveis" ? availableProducts : soldProducts).filter((p) =>
     p.name.toLowerCase().includes(query.toLowerCase())
   );
 
@@ -169,10 +180,49 @@ function ProdutosContent() {
         </button>
       </div>
 
+      <div className="mb-5 flex gap-2">
+        <button
+          onClick={() => setTab("disponiveis")}
+          className={`flex cursor-pointer items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-bold ${
+            tab === "disponiveis" ? "bg-[#3D7FFF] text-white" : "bg-white text-[#5B6472]"
+          }`}
+          style={{
+            border: `1px solid ${tab === "disponiveis" ? "#3D7FFF" : "rgba(15,23,42,0.12)"}`,
+          }}
+        >
+          Disponíveis
+          <span
+            className={`rounded-full px-1.5 text-[11px] ${
+              tab === "disponiveis" ? "bg-white/20" : "bg-[#F1F4F9] text-[#5B6472]"
+            }`}
+          >
+            {availableProducts.length}
+          </span>
+        </button>
+        <button
+          onClick={() => setTab("vendidos")}
+          className={`flex cursor-pointer items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-bold ${
+            tab === "vendidos" ? "bg-[#3D7FFF] text-white" : "bg-white text-[#5B6472]"
+          }`}
+          style={{
+            border: `1px solid ${tab === "vendidos" ? "#3D7FFF" : "rgba(15,23,42,0.12)"}`,
+          }}
+        >
+          Vendidos
+          <span
+            className={`rounded-full px-1.5 text-[11px] ${
+              tab === "vendidos" ? "bg-white/20" : "bg-[#F1F4F9] text-[#5B6472]"
+            }`}
+          >
+            {soldProducts.length}
+          </span>
+        </button>
+      </div>
+
       <div className="flex flex-col gap-3">
         {loading ? (
           <div className="py-10 text-center text-sm text-[#64748B]">Carregando...</div>
-        ) : filtered.length === 0 && products.length === 0 ? (
+        ) : products.length === 0 ? (
           <div
             className="rounded-2xl bg-white py-10 text-center"
             style={{ border: "1px dashed rgba(15,23,42,0.16)" }}
@@ -184,9 +234,20 @@ function ProdutosContent() {
               Clique em &quot;Novo Produto&quot; para cadastrar o primeiro item do seu estoque.
             </p>
           </div>
-        ) : filtered.length === 0 ? (
+        ) : filtered.length === 0 && query ? (
           <div className="py-10 text-center text-sm text-[#64748B]">
             Nenhum produto encontrado.
+          </div>
+        ) : filtered.length === 0 ? (
+          <div
+            className="rounded-2xl bg-white py-10 text-center"
+            style={{ border: "1px dashed rgba(15,23,42,0.16)" }}
+          >
+            <p className="m-0 text-[13px] text-[#64748B]">
+              {tab === "disponiveis"
+                ? "Nenhum produto disponível no momento."
+                : "Nenhum produto vendido ainda."}
+            </p>
           </div>
         ) : (
           filtered.map((p) => (
