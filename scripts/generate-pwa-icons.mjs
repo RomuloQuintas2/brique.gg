@@ -42,7 +42,6 @@ mkdirSync(path.join(root, "public", "icons"), { recursive: true });
 const targets = [
   { file: "public/icons/icon-192.png", size: 192, buffer: svgBuffer },
   { file: "public/icons/icon-512.png", size: 512, buffer: svgBuffer },
-  { file: "app/apple-icon.png", size: 180, buffer: svgBuffer },
   { file: "public/icons/icon-192-maskable.png", size: 192, buffer: maskableSvgBuffer },
   { file: "public/icons/icon-512-maskable.png", size: 512, buffer: maskableSvgBuffer },
 ];
@@ -54,3 +53,12 @@ for (const { file, size, buffer } of targets) {
     .toFile(path.join(root, file));
   console.log(`generated ${file} (${size}x${size})`);
 }
+
+// apple-icon: iOS renders transparent PNG areas as black, so this one gets a
+// solid white background flattened in — no transparency, same circle+arrow art.
+await sharp(svgBuffer, { density: 384 })
+  .resize(180, 180)
+  .flatten({ background: "#FFFFFF" })
+  .png()
+  .toFile(path.join(root, "app/apple-icon.png"));
+console.log("generated app/apple-icon.png (180x180, white background)");
