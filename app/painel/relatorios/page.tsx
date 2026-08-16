@@ -145,7 +145,7 @@ function RelatoriosContent() {
         </div>
         <div className="flex gap-2">
           <button
-            onClick={() => exportSalesPdf(filtered.map(toReportSale), "Relatório de Vendas — brique.gg")}
+            onClick={() => exportSalesPdf(filtered.map(toReportSale), "Relatório de Vendas · brique.gg")}
             disabled={filtered.length === 0}
             className="flex cursor-pointer items-center gap-1.5 rounded-full border-none bg-[#E05B5B] px-4 py-2.5 text-[13px] font-bold text-white disabled:cursor-not-allowed disabled:opacity-40"
           >

@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "brique.gg",
     short_name: "brique.gg",
-    description: "Lucro real para quem revende — sem chute e sem planilha.",
+    description: "Lucro real para quem revende, sem chute e sem planilha.",
     start_url: "/",
     display: "standalone",
     background_color: "#1D4ED8",

@@ -18,7 +18,7 @@ export default function UpsellCard() {
         </div>
       </div>
       <div className="mb-3 text-[13px] leading-[1.5] text-[#64748B]">
-        Clientes, fornecedores, ordens de serviço, QR Code PIX e relatórios avançados —
+        Clientes, fornecedores, ordens de serviço, QR Code PIX e relatórios avançados,
         leve seu brique pro próximo nível.
       </div>
       <Link

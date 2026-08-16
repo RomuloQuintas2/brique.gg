@@ -24,7 +24,7 @@ export default function PwaLandingSection() {
           Baixe o aplicativo
         </h2>
         <p className="m-0 mx-auto mb-6 max-w-[560px] text-[14px] leading-relaxed text-[#64748B]">
-          O brique.gg funciona perfeitamente em Android, iPhone e computador — instale com
+          O brique.gg funciona perfeitamente em Android, iPhone e computador. Instale com
           um toque e acesse direto da tela inicial, como se fosse um app nativo. Rápido, leve
           e sem ocupar espaço extra no seu aparelho.
         </p>

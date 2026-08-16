@@ -111,7 +111,7 @@ export default function Sidebar({
               Desbloqueie o PRO
             </div>
             <div className="mb-2.5 text-xs leading-[1.4] text-[#64748B]">
-              Clientes, fornecedores, OS, PIX automático e muito mais — leve seu brique pro
+              Clientes, fornecedores, OS, PIX automático e muito mais, leve seu brique pro
               próximo nível.
             </div>
             <Link

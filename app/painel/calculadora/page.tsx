@@ -66,7 +66,7 @@ function CalculadoraContent() {
     <>
       <PageHeader
         title="Calculadora de Lucro"
-        subtitle="Simule antes de fechar negócio — veja o lucro real, não o de fachada."
+        subtitle="Simule antes de fechar negócio, veja o lucro real, não o de fachada."
       />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -174,7 +174,7 @@ function CalculadoraContent() {
               <div className="flex items-center justify-between">
                 <span className="text-[#64748B]">Taxa do cartão ({taxaNum}%)</span>
                 <span className="font-semibold text-[#101828]">
-                  – {currency(taxaCartaoValor)}
+                  - {currency(taxaCartaoValor)}
                 </span>
               </div>
               <div

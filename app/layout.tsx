@@ -12,7 +12,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   display: "swap",
 });
 
-const title = "brique.gg — Lucro real para quem revende";
+const title = "brique.gg: Lucro real para quem revende";
 const description =
   "Cadastre produtos, registre vendas e acompanhe estoque, financeiro e lucro num só lugar.";
 

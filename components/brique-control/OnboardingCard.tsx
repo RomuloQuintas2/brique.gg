@@ -15,7 +15,7 @@ export default function OnboardingCard({
   const [dismissed, setDismissed] = useState(false);
   const { isInstalled, install } = usePwaInstall();
 
-  if (dismissed || (hasProducts && hasSales)) return null;
+  if (dismissed || (hasProducts && hasSales && isInstalled)) return null;
 
   return (
     <div
@@ -26,7 +26,7 @@ export default function OnboardingCard({
         <div>
           <div className="text-[15px] font-bold text-[#1D4ED8]">Seus primeiros passos</div>
           <p className="m-0 text-[13px] text-[#64748B]">
-            Duas coisas pra começar a ver seu lucro real.
+            Três coisas pra começar a ver seu lucro real.
           </p>
         </div>
         <button
@@ -39,6 +39,29 @@ export default function OnboardingCard({
       </div>
 
       <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+        <button
+          onClick={isInstalled ? undefined : install}
+          className="flex cursor-pointer items-center gap-3 rounded-2xl border-none p-4 text-left"
+          style={{ background: "rgba(242,201,76,0.1)", border: "1px solid rgba(242,201,76,0.3)" }}
+        >
+          <div
+            className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl text-[#8A5710]"
+            style={{ background: "rgba(242,201,76,0.25)" }}
+          >
+            {isInstalled ? <Check size={20} /> : <Download size={20} />}
+          </div>
+          <div className="min-w-0 flex-1">
+            <div
+              className={`text-sm font-bold ${isInstalled ? "text-slate-400 line-through" : "text-[#101828]"}`}
+            >
+              1. Baixe o app
+            </div>
+            <div className="text-xs text-[#64748B]">
+              Acesse direto da tela inicial do seu celular, sem navegador
+            </div>
+          </div>
+        </button>
+
         <Link
           href="/painel/produtos"
           className="flex items-center gap-3 rounded-2xl p-4"
@@ -51,7 +74,7 @@ export default function OnboardingCard({
             <div
               className={`text-sm font-bold ${hasProducts ? "text-slate-400 line-through" : "text-[#101828]"}`}
             >
-              1. Cadastre um produto
+              2. Cadastre seu primeiro produto
             </div>
             <div className="text-xs text-[#64748B]">Adicione o que você tem pra vender</div>
           </div>
@@ -70,35 +93,12 @@ export default function OnboardingCard({
             <div
               className={`text-sm font-bold ${hasSales ? "text-slate-400 line-through" : "text-[#101828]"}`}
             >
-              2. Registre uma venda
+              3. Registre sua primeira venda
             </div>
             <div className="text-xs text-[#64748B]">Veja seu lucro calculado na hora</div>
           </div>
           <ArrowRight size={16} className="flex-shrink-0 text-[#3FBE7A]" />
         </Link>
-
-        <button
-          onClick={isInstalled ? undefined : install}
-          className="flex cursor-pointer items-center gap-3 rounded-2xl border-none p-4 text-left"
-          style={{ background: "rgba(242,201,76,0.1)", border: "1px solid rgba(242,201,76,0.3)" }}
-        >
-          <div
-            className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl text-[#8A5710]"
-            style={{ background: "rgba(242,201,76,0.25)" }}
-          >
-            {isInstalled ? <Check size={20} /> : <Download size={20} />}
-          </div>
-          <div className="min-w-0 flex-1">
-            <div
-              className={`text-sm font-bold ${isInstalled ? "text-slate-400 line-through" : "text-[#101828]"}`}
-            >
-              3. Instale o app
-            </div>
-            <div className="text-xs text-[#64748B]">
-              Acesse direto da tela inicial do seu celular, sem navegador
-            </div>
-          </div>
-        </button>
       </div>
     </div>
   );

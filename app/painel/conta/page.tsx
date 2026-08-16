@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Store, Lock, MessageCircle, Download, Check } from "lucide-react";
+import Link from "next/link";
+import { Store, Lock, MessageCircle, Download, Check, CreditCard } from "lucide-react";
 import PageHeader from "@/components/brique-control/PageHeader";
+import ProBadge from "@/components/brique-control/ProBadge";
 import { useBrique } from "@/components/brique-control/BriqueContext";
 import { usePwaInstall } from "@/components/brique-control/PwaInstallContext";
 import { createClient } from "@/lib/supabase/client";
@@ -158,6 +160,39 @@ function ContaContent() {
             {savingProfile ? "Salvando..." : "Salvar alterações"}
           </button>
           {profileMsg && <span className="text-[13px] font-semibold text-[#3FBE7A]">{profileMsg}</span>}
+        </div>
+      </div>
+
+      <div
+        className="mb-5 rounded-[20px] bg-white p-6"
+        style={{ border: "1px solid rgba(15,23,42,0.09)" }}
+      >
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#3D7FFF]/10 text-[#3D7FFF]">
+              <CreditCard size={18} />
+            </div>
+            <div>
+              <div className="text-[15px] font-bold text-[#1D4ED8]">Seu plano atual</div>
+              {isPro ? (
+                <ProBadge className="mt-1 text-[10px] px-2 py-1" />
+              ) : (
+                <span
+                  className="mt-1 inline-flex items-center rounded-md bg-[#F1F4F9] px-1.5 py-0.5 text-[9.5px] font-extrabold tracking-wide text-[#64748B]"
+                >
+                  GRÁTIS
+                </span>
+              )}
+            </div>
+          </div>
+          {!isPro && (
+            <Link
+              href="/painel/assinatura"
+              className="cursor-pointer rounded-[11px] bg-[#3D7FFF] px-4 py-2 text-[13px] font-bold text-white no-underline"
+            >
+              Ver planos
+            </Link>
+          )}
         </div>
       </div>
 

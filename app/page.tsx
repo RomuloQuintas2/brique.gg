@@ -19,7 +19,7 @@ const steps = [
   {
     n: "3",
     title: "Acompanhe o financeiro",
-    desc: "Veja o que tem a receber, a pagar, e sua performance ao longo do tempo — tudo num só lugar.",
+    desc: "Veja o que tem a receber, a pagar, e sua performance ao longo do tempo, tudo num só lugar.",
   },
 ];
 
@@ -82,7 +82,7 @@ export default function LandingPage() {
             sem chute e sem planilha.
           </h1>
           <p className="m-0 max-w-[520px] text-[15px] leading-relaxed text-[#64748B]">
-            Cadastre e registre seus produtos, vendas e financeiro e lucro — de graça, sem cartão de crédito e sem prazo
+            Cadastre e registre seus produtos, vendas e financeiro e lucro, de graça, sem cartão de crédito e sem prazo
             pra vencer.
           </p>
           <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
@@ -161,7 +161,7 @@ export default function LandingPage() {
                 A maioria das ferramentas do mercado te dá 7 ou 14 dias grátis
                 e depois te obriga a pagar pra continuar usando o que você já
                 cadastrou. Aqui não. O plano gratuito do brique.gg é
-                permanente — você pode gerenciar produtos, vendas, estoque e
+                permanente. Você pode gerenciar produtos, vendas, estoque e
                 financeiro sem nunca precisar assinar nada. O PRO existe pra
                 quem quer ir além (clientes, fornecedores, ordens de serviço,
                 relatórios avançados), não pra travar o básico.
@@ -209,7 +209,7 @@ export default function LandingPage() {
             </div>
             <p className="m-0 mx-auto max-w-[560px] text-[14px] leading-relaxed text-[#64748B]">
               Clientes, fornecedores, ordens de serviço, QR Code PIX, relatórios avançados e
-              muito mais — por R$ 19,90/mês, disponíveis quando você quiser dar o próximo
+              muito mais, por R$ 19,90/mês, disponíveis quando você quiser dar o próximo
               passo.
             </p>
           </div>

@@ -107,7 +107,7 @@ function AssinaturaContent() {
           {isPro && lockedPrice !== null && (
             <div className="mb-4 flex items-center gap-1.5 text-[12px] font-semibold text-[#1B7A4A]">
               <Lock size={12} />
-              Preço travado — não muda mesmo se o valor do PRO subir.
+              Preço travado, não muda mesmo se o valor do PRO subir.
             </div>
           )}
           {!isPro && <div className="mb-4" />}

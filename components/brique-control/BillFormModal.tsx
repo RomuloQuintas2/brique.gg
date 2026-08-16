@@ -164,7 +164,7 @@ export default function BillFormModal({
               className="mt-0.5 h-4 w-4 flex-shrink-0 accent-[#3D7FFF]"
             />
             <span className="text-[12.5px] leading-snug text-[#64748B]">
-              Conta com valor variável (água, luz, etc) — vou lembrar de revisar antes de marcar
+              Conta com valor variável (água, luz, etc), vou lembrar de revisar antes de marcar
               pago
             </span>
           </label>

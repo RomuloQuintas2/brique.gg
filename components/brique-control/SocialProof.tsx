@@ -12,7 +12,7 @@ export default function SocialProof() {
     <section className="py-8">
       <div className="flex flex-col items-center gap-6 text-center">
         <p className="m-0 max-w-[560px] text-lg font-bold text-[#101828] sm:text-xl">
-          Feito para quem vive de revender — do brechó ao revendedor de eletrônicos.
+          Feito para quem vive de revender, do brechó ao revendedor de eletrônicos.
         </p>
         <div className="flex flex-wrap items-center justify-center gap-3">
           {niches.map((n) => (
