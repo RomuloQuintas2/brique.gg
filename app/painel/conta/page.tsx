@@ -116,7 +116,7 @@ function ContaContent() {
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#3D7FFF]/10 text-[#3D7FFF]">
             <Store size={18} />
           </div>
-          <div className="text-[15px] font-bold text-[#1D4ED8]">Dados do negócio</div>
+          <div className="text-[15px] font-bold text-[#1D4ED8]">Dados da conta</div>
         </div>
 
         <div className="flex flex-col gap-4">
@@ -130,11 +130,11 @@ function ContaContent() {
             />
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className="text-[13px] font-semibold text-[#101828]">Nome do negócio</label>
+            <label className="text-[13px] font-semibold text-[#101828]">Seu nome ou do seu negócio</label>
             <input
               value={businessName}
               onChange={(e) => setBusinessName(e.target.value)}
-              placeholder="Ex: Loja da Mari"
+              placeholder="Ex: Rômulo"
               className="rounded-[11px] bg-[#F5F7FA] px-3 py-2.5 text-sm text-[#101828]"
               style={{ border: "1px solid rgba(15,23,42,0.15)" }}
             />
