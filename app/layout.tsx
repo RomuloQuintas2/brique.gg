@@ -1,5 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
+import { PwaInstallProvider } from "@/components/brique-control/PwaInstallContext";
+import IosInstallModal from "@/components/brique-control/IosInstallModal";
+import ServiceWorkerRegister from "@/components/brique-control/ServiceWorkerRegister";
 import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -40,7 +43,11 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={plusJakartaSans.variable}>
       <body style={{ fontFamily: "var(--font-jakarta), -apple-system, sans-serif" }}>
-        {children}
+        <PwaInstallProvider>
+          {children}
+          <IosInstallModal />
+          <ServiceWorkerRegister />
+        </PwaInstallProvider>
       </body>
     </html>
   );

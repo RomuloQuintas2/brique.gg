@@ -3,6 +3,7 @@ import { Package, Tag, Wallet, Target, TrendingUp, BadgeCheck, Check, Infinity a
 import Logo from "@/components/brique-control/Logo";
 import SocialProof from "@/components/brique-control/SocialProof";
 import ProBadge from "@/components/brique-control/ProBadge";
+import PwaLandingSection from "@/components/brique-control/PwaLandingSection";
 
 const steps = [
   {
@@ -192,6 +193,8 @@ export default function LandingPage() {
             ))}
           </div>
         </section>
+
+        <PwaLandingSection />
 
         <section className="py-8">
           <div

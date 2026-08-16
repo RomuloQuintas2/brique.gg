@@ -1,4 +1,7 @@
-import { HelpCircle, Bell } from "lucide-react";
+"use client";
+
+import { HelpCircle, Bell, Download } from "lucide-react";
+import { usePwaInstall } from "./PwaInstallContext";
 
 export default function PageHeader({
   title,
@@ -7,6 +10,8 @@ export default function PageHeader({
   title: string;
   subtitle: string;
 }) {
+  const { isInstalled, install } = usePwaInstall();
+
   return (
     <div className="mb-[22px] flex flex-wrap items-start justify-between gap-4">
       <div>
@@ -16,6 +21,16 @@ export default function PageHeader({
         <p className="m-0 text-sm text-[#64748B]">{subtitle}</p>
       </div>
       <div className="hidden items-center gap-2 lg:flex">
+        {!isInstalled && (
+          <button
+            onClick={install}
+            title="Instalar app"
+            className="flex cursor-pointer items-center rounded-[11px] bg-white p-2.5 text-[#64748B]"
+            style={{ border: "1px solid rgba(15,23,42,0.09)" }}
+          >
+            <Download size={18} />
+          </button>
+        )}
         <button
           className="flex cursor-pointer items-center rounded-[11px] bg-white p-2.5 text-[#64748B]"
           style={{ border: "1px solid rgba(15,23,42,0.09)" }}

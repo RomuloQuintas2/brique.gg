@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Store, Lock, MessageCircle } from "lucide-react";
+import { Store, Lock, MessageCircle, Download, Check } from "lucide-react";
 import PageHeader from "@/components/brique-control/PageHeader";
 import { useBrique } from "@/components/brique-control/BriqueContext";
+import { usePwaInstall } from "@/components/brique-control/PwaInstallContext";
 import { createClient } from "@/lib/supabase/client";
 
 function ContaContent() {
   const { isPro } = useBrique();
+  const { isInstalled, install } = usePwaInstall();
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState("");
   const [businessName, setBusinessName] = useState("");
@@ -207,6 +209,39 @@ function ContaContent() {
           </button>
           {passwordMsg && <span className="text-[13px] font-semibold text-[#3FBE7A]">{passwordMsg}</span>}
         </div>
+      </div>
+
+      <div
+        className="mt-5 rounded-[20px] bg-white p-6"
+        style={{ border: "1px solid rgba(15,23,42,0.09)" }}
+      >
+        <div className="mb-3 flex items-center gap-2.5">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#3D7FFF]/10 text-[#3D7FFF]">
+            {isInstalled ? <Check size={18} /> : <Download size={18} />}
+          </div>
+          <div className="text-[15px] font-bold text-[#1D4ED8]">
+            {isInstalled ? "App instalado ✓" : "Instalar aplicativo"}
+          </div>
+        </div>
+        {isInstalled ? (
+          <p className="m-0 text-[13.5px] text-[#64748B]">
+            Você já pode acessar o brique.gg direto da tela inicial do seu aparelho.
+          </p>
+        ) : (
+          <>
+            <p className="m-0 mb-4 text-[13.5px] text-[#64748B]">
+              Acesse o brique.gg direto da tela inicial do seu celular ou computador, sem
+              abrir o navegador.
+            </p>
+            <button
+              onClick={install}
+              className="flex cursor-pointer items-center gap-2 rounded-[11px] border-none bg-[#3D7FFF] px-5 py-2.5 text-sm font-bold text-white"
+            >
+              <Download size={16} />
+              Instalar aplicativo
+            </button>
+          </>
+        )}
       </div>
 
       {isPro && (

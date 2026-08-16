@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Package, Tag, ArrowRight, Check, X } from "lucide-react";
+import { Package, Tag, Download, ArrowRight, Check, X } from "lucide-react";
+import { usePwaInstall } from "./PwaInstallContext";
 
 export default function OnboardingCard({
   hasProducts,
@@ -12,6 +13,7 @@ export default function OnboardingCard({
   hasSales: boolean;
 }) {
   const [dismissed, setDismissed] = useState(false);
+  const { isInstalled, install } = usePwaInstall();
 
   if (dismissed || (hasProducts && hasSales)) return null;
 
@@ -36,7 +38,7 @@ export default function OnboardingCard({
         </button>
       </div>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
         <Link
           href="/painel/produtos"
           className="flex items-center gap-3 rounded-2xl p-4"
@@ -74,6 +76,29 @@ export default function OnboardingCard({
           </div>
           <ArrowRight size={16} className="flex-shrink-0 text-[#3FBE7A]" />
         </Link>
+
+        <button
+          onClick={isInstalled ? undefined : install}
+          className="flex cursor-pointer items-center gap-3 rounded-2xl border-none p-4 text-left"
+          style={{ background: "rgba(242,201,76,0.1)", border: "1px solid rgba(242,201,76,0.3)" }}
+        >
+          <div
+            className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl text-[#8A5710]"
+            style={{ background: "rgba(242,201,76,0.25)" }}
+          >
+            {isInstalled ? <Check size={20} /> : <Download size={20} />}
+          </div>
+          <div className="min-w-0 flex-1">
+            <div
+              className={`text-sm font-bold ${isInstalled ? "text-slate-400 line-through" : "text-[#101828]"}`}
+            >
+              3. Instale o app
+            </div>
+            <div className="text-xs text-[#64748B]">
+              Acesse direto da tela inicial do seu celular, sem navegador
+            </div>
+          </div>
+        </button>
       </div>
     </div>
   );
