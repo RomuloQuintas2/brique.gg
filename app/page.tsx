@@ -143,6 +143,8 @@ export default function LandingPage() {
           </div>
         </section>
 
+        <PwaLandingSection />
+
         <section className="py-10">
           <div
             className="flex flex-col items-center gap-5 rounded-[24px] bg-white p-8 text-center sm:flex-row sm:items-start sm:gap-6 sm:p-10 sm:text-left"
@@ -193,8 +195,6 @@ export default function LandingPage() {
             ))}
           </div>
         </section>
-
-        <PwaLandingSection />
 
         <section className="py-8">
           <div

@@ -21,7 +21,7 @@ export default function PwaLandingSection() {
         style={{ border: "1px solid rgba(15,23,42,0.09)" }}
       >
         <h2 className="m-0 mb-2 text-xl font-extrabold text-[#101828] sm:text-2xl">
-          Use como um aplicativo, sem precisar baixar de loja nenhuma
+          Baixe o aplicativo
         </h2>
         <p className="m-0 mx-auto mb-6 max-w-[560px] text-[14px] leading-relaxed text-[#64748B]">
           O brique.gg funciona perfeitamente em Android, iPhone e computador — instale com

@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { X, LogOut } from "lucide-react";
+import { X, LogOut, Download } from "lucide-react";
 import { navGroups } from "./navData";
 import SidebarItem from "./SidebarItem";
 import { useBrique } from "./BriqueContext";
+import { usePwaInstall } from "./PwaInstallContext";
 import Logo from "./Logo";
 
 export default function Sidebar({
@@ -27,6 +28,7 @@ export default function Sidebar({
   onlyKeys?: string[];
 }) {
   const { isPro, openUpgradeModal } = useBrique();
+  const { isInstalled, install } = usePwaInstall();
   const isRight = side === "right";
 
   const visibleGroups = navGroups
@@ -61,6 +63,20 @@ export default function Sidebar({
             <X size={20} />
           </button>
         </div>
+
+        {!isInstalled && (
+          <div className="px-3 pb-1.5">
+            <button
+              onClick={install}
+              className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-2.5 py-2.5 text-sm font-semibold text-[#475467] hover:bg-slate-900/5"
+            >
+              <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center">
+                <Download size={18} strokeWidth={1.8} />
+              </span>
+              Instalar app
+            </button>
+          </div>
+        )}
 
         <nav className="flex-1 overflow-y-auto px-3 pt-1 pb-3">
           {visibleGroups.map((group) => (
