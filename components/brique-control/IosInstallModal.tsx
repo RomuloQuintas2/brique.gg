@@ -2,6 +2,16 @@
 
 import { usePwaInstall } from "./PwaInstallContext";
 
+function MoreIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="5" cy="12" r="1.8" fill="#3D7FFF" />
+      <circle cx="12" cy="12" r="1.8" fill="#3D7FFF" />
+      <circle cx="19" cy="12" r="1.8" fill="#3D7FFF" />
+    </svg>
+  );
+}
+
 function ShareIcon() {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -27,8 +37,12 @@ function AddToHomeIcon() {
 
 const STEPS = [
   {
+    icon: <MoreIcon />,
+    text: "Toque nos três pontinhos ao lado da barra do Safari",
+  },
+  {
     icon: <ShareIcon />,
-    text: "Toque no ícone de compartilhar na barra do Safari",
+    text: "Toque em compartilhar",
   },
   {
     icon: <AddToHomeIcon />,
