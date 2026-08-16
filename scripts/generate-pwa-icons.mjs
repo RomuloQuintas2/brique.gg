@@ -54,11 +54,23 @@ for (const { file, size, buffer } of targets) {
   console.log(`generated ${file} (${size}x${size})`);
 }
 
-// apple-icon: iOS renders transparent PNG areas as black, so this one gets a
-// solid white background flattened in — no transparency, same circle+arrow art.
-await sharp(svgBuffer, { density: 384 })
+// apple-icon: full-bleed brand blue (no circle boundary), white arrow on top.
+// iOS applies its own rounded-corner mask, so the square edges stay hard here.
+const appleSvg = `
+<svg width="90" height="90" viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="90" height="90" fill="#1D4ED8"/>
+  <path d="M 25 55 L 40 35 L 50 45 L 65 25"
+        stroke="#FFFFFF" stroke-width="6" fill="none"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M 55 25 L 65 25 L 65 35"
+        stroke="#FFFFFF" stroke-width="6" fill="none"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+`;
+
+await sharp(Buffer.from(appleSvg), { density: 384 })
   .resize(180, 180)
-  .flatten({ background: "#FFFFFF" })
+  .flatten({ background: "#1D4ED8" })
   .png()
   .toFile(path.join(root, "app/apple-icon.png"));
-console.log("generated app/apple-icon.png (180x180, white background)");
+console.log("generated app/apple-icon.png (180x180, solid blue background)");
