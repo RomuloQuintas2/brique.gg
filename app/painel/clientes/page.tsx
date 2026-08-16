@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Plus, Search } from "lucide-react";
-import AppShell from "@/components/brique-control/AppShell";
 import PageHeader from "@/components/brique-control/PageHeader";
 import ClienteCard, { type Cliente } from "@/components/brique-control/ClienteCard";
 import ClienteFormModal, { type ClienteFormValues } from "@/components/brique-control/ClienteFormModal";
@@ -177,9 +176,6 @@ function ClientesContent() {
 }
 
 export default function ClientesPage() {
-  return (
-    <AppShell>
-      <ClientesContent />
-    </AppShell>
-  );
+  return <ClientesContent />;
 }
+

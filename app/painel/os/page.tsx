@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Plus, Search } from "lucide-react";
-import AppShell from "@/components/brique-control/AppShell";
 import PageHeader from "@/components/brique-control/PageHeader";
 import OSRow, { type ServiceOrder, type OSStatus } from "@/components/brique-control/OSRow";
 import OSFormModal, { type OSFormValues } from "@/components/brique-control/OSFormModal";
@@ -182,9 +181,6 @@ function OSContent() {
 }
 
 export default function OSPage() {
-  return (
-    <AppShell>
-      <OSContent />
-    </AppShell>
-  );
+  return <OSContent />;
 }
+

@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { FileDown, FileSpreadsheet } from "lucide-react";
-import AppShell from "@/components/brique-control/AppShell";
 import PageHeader from "@/components/brique-control/PageHeader";
 import PeriodFilter from "@/components/brique-control/PeriodFilter";
 import SaleRow, { type Sale } from "@/components/brique-control/SaleRow";
@@ -182,9 +181,6 @@ function RelatoriosContent() {
 }
 
 export default function RelatoriosPage() {
-  return (
-    <AppShell>
-      <RelatoriosContent />
-    </AppShell>
-  );
+  return <RelatoriosContent />;
 }
+

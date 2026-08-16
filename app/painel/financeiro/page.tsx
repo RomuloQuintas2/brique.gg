@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight, Plus, ArrowUpRight, ArrowDownRight } from "lucide-react";
-import AppShell from "@/components/brique-control/AppShell";
 import PageHeader from "@/components/brique-control/PageHeader";
 import FinanceListRow from "@/components/brique-control/FinanceListRow";
 import BillRow, { type Bill } from "@/components/brique-control/BillRow";
@@ -620,9 +619,6 @@ function FinanceiroContent() {
 }
 
 export default function FinanceiroPage() {
-  return (
-    <AppShell>
-      <FinanceiroContent />
-    </AppShell>
-  );
+  return <FinanceiroContent />;
 }
+

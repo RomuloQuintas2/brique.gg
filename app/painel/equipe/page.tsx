@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Plus, Copy, X, UsersRound } from "lucide-react";
-import AppShell from "@/components/brique-control/AppShell";
 import PageHeader from "@/components/brique-control/PageHeader";
 import { createClient } from "@/lib/supabase/client";
 
@@ -272,9 +271,6 @@ function EquipeContent() {
 }
 
 export default function EquipePage() {
-  return (
-    <AppShell>
-      <EquipeContent />
-    </AppShell>
-  );
+  return <EquipeContent />;
 }
+

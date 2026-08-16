@@ -47,11 +47,11 @@ export const navGroups: NavGroup[] = [
       { key: "fornecedores", label: "Fornecedores", icon: Truck, pro: true },
       { key: "calc", label: "Calculadora de Lucro", icon: Calculator, pro: true },
       { key: "imei", label: "Consulta de IMEI", icon: Search, pro: true },
-      { key: "pix", label: "Gerador de QR PIX", icon: QrCode, pro: true, isNew: true },
+      { key: "pix", label: "Gerador de QR PIX", icon: QrCode, pro: true },
       { key: "os", label: "Ordens de Serviço", icon: Wrench, pro: true, isNew: true },
       { key: "relatorios", label: "Relatórios Avançados", icon: FileBarChart, pro: true, isNew: true },
       { key: "backup", label: "Backup de Dados", icon: HardDriveDownload, pro: true, isNew: true },
-      { key: "equipe", label: "Multiusuário", icon: UsersRound, pro: true, isNew: true },
+      { key: "equipe", label: "Multiusuário", icon: UsersRound, pro: true },
     ],
   },
   {

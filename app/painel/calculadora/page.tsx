@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Calculator, Lightbulb } from "lucide-react";
-import AppShell from "@/components/brique-control/AppShell";
 import PageHeader from "@/components/brique-control/PageHeader";
 
 const currency = (v: number) =>
@@ -196,9 +195,6 @@ function CalculadoraContent() {
 }
 
 export default function CalculadoraPage() {
-  return (
-    <AppShell>
-      <CalculadoraContent />
-    </AppShell>
-  );
+  return <CalculadoraContent />;
 }
+

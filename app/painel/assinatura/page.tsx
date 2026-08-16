@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Check, Lock } from "lucide-react";
-import AppShell from "@/components/brique-control/AppShell";
 import PageHeader from "@/components/brique-control/PageHeader";
 import ProBadge from "@/components/brique-control/ProBadge";
 import { useBrique } from "@/components/brique-control/BriqueContext";
@@ -137,9 +136,6 @@ function AssinaturaContent() {
 }
 
 export default function AssinaturaPage() {
-  return (
-    <AppShell>
-      <AssinaturaContent />
-    </AppShell>
-  );
+  return <AssinaturaContent />;
 }
+

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { X, LogOut } from "lucide-react";
 import { navGroups } from "./navData";
 import SidebarItem from "./SidebarItem";
@@ -97,12 +98,13 @@ export default function Sidebar({
               Clientes, fornecedores, OS, PIX automático e muito mais — leve seu brique pro
               próximo nível.
             </div>
-            <button
-              onClick={openUpgradeModal}
-              className="block w-full cursor-pointer rounded-[10px] border-none bg-[#3D7FFF] py-2 text-center text-[12.5px] font-bold text-white"
+            <Link
+              href="/painel/assinatura"
+              onClick={onClose}
+              className="block w-full cursor-pointer rounded-[10px] border-none bg-[#3D7FFF] py-2 text-center text-[12.5px] font-bold text-white no-underline"
             >
               Ver planos
-            </button>
+            </Link>
           </div>
         )}
 

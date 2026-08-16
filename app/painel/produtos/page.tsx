@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Plus, Search } from "lucide-react";
-import AppShell from "@/components/brique-control/AppShell";
 import PageHeader from "@/components/brique-control/PageHeader";
 import ProductCard, { type Product } from "@/components/brique-control/ProductCard";
 import ProductFormModal, { type ProductFormValues } from "@/components/brique-control/ProductFormModal";
@@ -295,9 +294,6 @@ function ProdutosContent() {
 }
 
 export default function ProdutosPage() {
-  return (
-    <AppShell>
-      <ProdutosContent />
-    </AppShell>
-  );
+  return <ProdutosContent />;
 }
+

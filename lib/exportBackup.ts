@@ -1,4 +1,3 @@
-import * as XLSX from "xlsx";
 import { createClient } from "@/lib/supabase/client";
 
 export async function exportFullBackup() {
@@ -8,7 +7,8 @@ export async function exportFullBackup() {
   } = await supabase.auth.getUser();
   if (!user) return false;
 
-  const [products, sales, bills, clientes, fornecedores, os] = await Promise.all([
+  const [XLSX, products, sales, bills, clientes, fornecedores, os] = await Promise.all([
+    import("xlsx"),
     supabase.from("products").select("*"),
     supabase.from("sales").select("*"),
     supabase.from("bills").select("*"),

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Store, Lock, MessageCircle } from "lucide-react";
-import AppShell from "@/components/brique-control/AppShell";
 import PageHeader from "@/components/brique-control/PageHeader";
 import { useBrique } from "@/components/brique-control/BriqueContext";
 import { createClient } from "@/lib/supabase/client";
@@ -242,9 +241,6 @@ function ContaContent() {
 }
 
 export default function ContaPage() {
-  return (
-    <AppShell>
-      <ContaContent />
-    </AppShell>
-  );
+  return <ContaContent />;
 }
+

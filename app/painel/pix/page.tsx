@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Download, QrCode } from "lucide-react";
-import QRCode from "qrcode";
-import AppShell from "@/components/brique-control/AppShell";
 import PageHeader from "@/components/brique-control/PageHeader";
 import { buildPixPayload, type PixKeyType } from "@/lib/pixPayload";
 import { createClient } from "@/lib/supabase/client";
@@ -89,6 +87,7 @@ function PixContent() {
       merchantCity: city,
       amount: amount ? Number(amount) : undefined,
     });
+    const QRCode = await import("qrcode");
     const dataUrl = await QRCode.toDataURL(payload, { width: 280, margin: 1 });
     setQrDataUrl(dataUrl);
   };
@@ -231,9 +230,6 @@ function PixContent() {
 }
 
 export default function PixPage() {
-  return (
-    <AppShell>
-      <PixContent />
-    </AppShell>
-  );
+  return <PixContent />;
 }
+

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Plus, Search } from "lucide-react";
-import AppShell from "@/components/brique-control/AppShell";
 import PageHeader from "@/components/brique-control/PageHeader";
 import FornecedorCard, { type Fornecedor } from "@/components/brique-control/FornecedorCard";
 import FornecedorFormModal, {
@@ -170,9 +169,6 @@ function FornecedoresContent() {
 }
 
 export default function FornecedoresPage() {
-  return (
-    <AppShell>
-      <FornecedoresContent />
-    </AppShell>
-  );
+  return <FornecedoresContent />;
 }
+

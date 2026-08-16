@@ -1,6 +1,7 @@
+import Link from "next/link";
 import ProBadge from "./ProBadge";
 
-export default function UpsellCard({ onUpgradeClick }: { onUpgradeClick: () => void }) {
+export default function UpsellCard() {
   return (
     <div
       className="rounded-[20px] p-5"
@@ -20,12 +21,12 @@ export default function UpsellCard({ onUpgradeClick }: { onUpgradeClick: () => v
         Clientes, fornecedores, ordens de serviço, QR Code PIX e relatórios avançados —
         leve seu brique pro próximo nível.
       </div>
-      <button
-        onClick={onUpgradeClick}
-        className="inline-block cursor-pointer rounded-[11px] border-none bg-[#3D7FFF] px-4 py-2.5 text-[13px] font-bold text-white"
+      <Link
+        href="/painel/assinatura"
+        className="inline-block cursor-pointer rounded-[11px] border-none bg-[#3D7FFF] px-4 py-2.5 text-[13px] font-bold text-white no-underline"
       >
         Ver planos
-      </button>
+      </Link>
     </div>
   );
 }

@@ -1,7 +1,3 @@
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
-import * as XLSX from "xlsx";
-
 export type ReportSale = {
   sale_date: string;
   product_name: string;
@@ -20,7 +16,12 @@ const formatDate = (iso: string) => {
   return `${d}/${m}/${y}`;
 };
 
-export function exportSalesPdf(sales: ReportSale[], title: string) {
+export async function exportSalesPdf(sales: ReportSale[], title: string) {
+  const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+    import("jspdf"),
+    import("jspdf-autotable"),
+  ]);
+
   const doc = new jsPDF();
   doc.setFontSize(14);
   doc.text(title, 14, 16);
@@ -53,7 +54,9 @@ export function exportSalesPdf(sales: ReportSale[], title: string) {
   doc.save("relatorio-vendas-briquegg.pdf");
 }
 
-export function exportSalesExcel(sales: ReportSale[]) {
+export async function exportSalesExcel(sales: ReportSale[]) {
+  const XLSX = await import("xlsx");
+
   const rows = sales.map((s) => ({
     Data: formatDate(s.sale_date),
     Produto: s.product_name,

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import AppShell from "@/components/brique-control/AppShell";
 import PageHeader from "@/components/brique-control/PageHeader";
 import OnboardingCard from "@/components/brique-control/OnboardingCard";
 import PeriodFilter from "@/components/brique-control/PeriodFilter";
@@ -12,7 +11,6 @@ import SalesPlatformsCard, {
   type PlatformCount,
 } from "@/components/brique-control/SalesPlatformsCard";
 import UpsellCard from "@/components/brique-control/UpsellCard";
-import { useBrique } from "@/components/brique-control/BriqueContext";
 import { createClient } from "@/lib/supabase/client";
 import { getDateRange, toLocalISODate } from "@/lib/dateRange";
 
@@ -42,7 +40,6 @@ function HomeContent() {
     toLocalISODate(new Date(today.getFullYear(), today.getMonth(), today.getDate() - 29))
   );
   const [customEnd, setCustomEnd] = useState(toLocalISODate(today));
-  const { openUpgradeModal } = useBrique();
 
   const [firstName, setFirstName] = useState("");
   const [stockValue, setStockValue] = useState(0);
@@ -174,7 +171,7 @@ function HomeContent() {
       <SalesPlatformsCard data={platformCounts} />
 
       <div className="grid grid-cols-1 gap-3.5 [grid-template-columns:repeat(auto-fit,minmax(260px,1fr))]">
-        <UpsellCard onUpgradeClick={openUpgradeModal} />
+        <UpsellCard />
       </div>
 
       <div className="h-8" />
@@ -183,9 +180,6 @@ function HomeContent() {
 }
 
 export default function HomePage() {
-  return (
-    <AppShell>
-      <HomeContent />
-    </AppShell>
-  );
+  return <HomeContent />;
 }
+

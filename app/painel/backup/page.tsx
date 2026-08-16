@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Download } from "lucide-react";
-import AppShell from "@/components/brique-control/AppShell";
 import PageHeader from "@/components/brique-control/PageHeader";
 import { exportFullBackup } from "@/lib/exportBackup";
 
@@ -49,9 +48,6 @@ function BackupContent() {
 }
 
 export default function BackupPage() {
-  return (
-    <AppShell>
-      <BackupContent />
-    </AppShell>
-  );
+  return <BackupContent />;
 }
+
