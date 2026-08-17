@@ -2,8 +2,6 @@
 
 import { X, Sparkles } from "lucide-react";
 import { useBrique } from "./BriqueContext";
-import { createClient } from "@/lib/supabase/client";
-import { CURRENT_PRO_PRICE } from "@/lib/proPricing";
 
 const benefits = [
   "Clientes e fornecedores",
@@ -14,7 +12,7 @@ const benefits = [
 ];
 
 export default function UpgradeModal() {
-  const { upgradeModalOpen, closeUpgradeModal, setIsPro } = useBrique();
+  const { upgradeModalOpen, closeUpgradeModal } = useBrique();
 
   if (!upgradeModalOpen) return null;
 
@@ -59,32 +57,15 @@ export default function UpgradeModal() {
         </ul>
 
         <button
-          onClick={async () => {
-            setIsPro(true);
-            closeUpgradeModal();
-            const supabase = createClient();
-            const {
-              data: { user },
-            } = await supabase.auth.getUser();
-            if (!user) return;
-            const { data: profile } = await supabase
-              .from("profiles")
-              .select("locked_price")
-              .eq("id", user.id)
-              .single();
-            if (profile && profile.locked_price === null) {
-              await supabase
-                .from("profiles")
-                .update({
-                  locked_price: CURRENT_PRO_PRICE,
-                  subscribed_at: new Date().toISOString().slice(0, 10),
-                })
-                .eq("id", user.id);
-            }
-          }}
-          className="mb-2 w-full cursor-pointer rounded-[11px] border-none bg-[#3D7FFF] py-3 text-sm font-bold text-white"
+          type="button"
+          disabled
+          title="Em breve"
+          className="mb-2 flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-[11px] border-none bg-[#F5F7FA] py-3 text-sm font-bold text-[#94A3B8]"
         >
-          Ver planos
+          Assinar PRO
+          <span className="rounded-full bg-[#F2C94C]/40 px-2 py-0.5 text-[10px] font-bold text-[#8A5710]">
+            em breve
+          </span>
         </button>
         <button
           onClick={closeUpgradeModal}
