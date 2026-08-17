@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
+import { headers } from "next/headers";
 import { PwaInstallProvider } from "@/components/brique-control/PwaInstallContext";
 import IosInstallModal from "@/components/brique-control/IosInstallModal";
 import ServiceWorkerRegister from "@/components/brique-control/ServiceWorkerRegister";
@@ -35,11 +36,19 @@ export const viewport: Viewport = {
   themeColor: "#1D4ED8",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Reading headers() here forces every page under this layout into dynamic
+  // rendering. Required: the CSP nonce is generated fresh per-request in
+  // middleware.ts, but without this, Next.js statically prerenders pages like
+  // /login at build time with their own baked-in nonce -- which then never
+  // matches the fresh nonce in the per-request CSP header, so the browser
+  // blocks every script on the page (looks like a broken site, isn't a 503).
+  await headers();
+
   return (
     <html lang="pt-BR" className={plusJakartaSans.variable}>
       <body style={{ fontFamily: "var(--font-jakarta), -apple-system, sans-serif" }}>
