@@ -42,6 +42,9 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    // The Mercado Pago webhook is called by Mercado Pago's servers, never by
+    // a browser -- it doesn't need CSP headers or Supabase cookie handling,
+    // and must never depend on anything but its own signature validation.
+    "/((?!_next/static|_next/image|favicon.ico|api/mercadopago/webhook|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

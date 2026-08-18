@@ -8,6 +8,29 @@ import { useBrique } from "@/components/brique-control/BriqueContext";
 import { createClient } from "@/lib/supabase/client";
 import { CURRENT_PRO_PRICE } from "@/lib/proPricing";
 
+function useAssinarPro() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const assinar = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/mercadopago/create-subscription", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok || !data.checkoutUrl) {
+        throw new Error(data.error ?? "erro desconhecido");
+      }
+      window.location.href = data.checkoutUrl;
+    } catch {
+      setError("Não foi possível iniciar sua assinatura agora. Tente de novo em instantes.");
+      setLoading(false);
+    }
+  };
+
+  return { assinar, loading, error };
+}
+
 const currency = (v: number) =>
   v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
@@ -31,7 +54,8 @@ const proFeatures = [
 ];
 
 function AssinaturaContent() {
-  const { isPro, openUpgradeModal } = useBrique();
+  const { isPro } = useBrique();
+  const { assinar, loading, error } = useAssinarPro();
   const [lockedPrice, setLockedPrice] = useState<number | null>(null);
 
   useEffect(() => {
@@ -120,12 +144,18 @@ function AssinaturaContent() {
             ))}
           </ul>
           {!isPro && (
-            <button
-              onClick={openUpgradeModal}
-              className="w-full cursor-pointer rounded-[11px] border-none bg-[#3D7FFF] py-3 text-sm font-bold text-white"
-            >
-              Assinar PRO
-            </button>
+            <>
+              <button
+                onClick={assinar}
+                disabled={loading}
+                className="w-full cursor-pointer rounded-[11px] border-none bg-[#3D7FFF] py-3 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {loading ? "Preparando pagamento..." : "Assinar PRO"}
+              </button>
+              {error && (
+                <p className="m-0 mt-3 text-[12.5px] font-semibold text-[#B91C1C]">{error}</p>
+              )}
+            </>
           )}
         </div>
       </div>
