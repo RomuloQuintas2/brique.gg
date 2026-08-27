@@ -16,7 +16,7 @@ function useAssinarPro() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/mercadopago/create-subscription", { method: "POST" });
+      const res = await fetch("/api/kiwify/create-checkout", { method: "POST" });
       const data = await res.json();
       if (!res.ok || !data.checkoutUrl) {
         throw new Error(data.error ?? "erro desconhecido");

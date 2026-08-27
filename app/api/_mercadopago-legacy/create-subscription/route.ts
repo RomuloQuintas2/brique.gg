@@ -1,3 +1,7 @@
+// LEGACY / INACTIVE -- payment provider migrated to Kiwify (see
+// app/api/kiwify). This folder is prefixed with `_`, which Next.js App
+// Router excludes from routing entirely -- /api/mercadopago/* resolves to
+// 404, this code cannot run. Kept only in case of rollback.
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getPreApprovalClient } from "@/lib/mercadopago";

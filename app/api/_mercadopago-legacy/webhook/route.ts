@@ -1,3 +1,7 @@
+// LEGACY / INACTIVE -- payment provider migrated to Kiwify (see
+// app/api/kiwify). This folder is prefixed with `_`, which Next.js App
+// Router excludes from routing entirely -- /api/mercadopago/* resolves to
+// 404, this code cannot run. Kept only in case of rollback.
 import { NextResponse, type NextRequest } from "next/server";
 import {
   WebhookSignatureValidator,
@@ -128,6 +132,18 @@ export async function POST(request: NextRequest) {
             mp_last_payment_id: String(payment.id),
           })
           .eq("id", userId);
+      } else {
+        // Structured log so a decline reason is available from server logs
+        // without a manual GET /v1/payments/{id} lookup later. No card data
+        // here -- payment.status_detail is MercadoPago's own decline-reason
+        // enum (e.g. cc_rejected_insufficient_amount), not PAN/CVV/etc.
+        console.warn("[mercadopago-webhook] payment não aprovado", {
+          paymentId: payment.id,
+          userId,
+          status: payment.status,
+          status_detail: payment.status_detail,
+          payment_method_id: payment.payment_method_id,
+        });
       }
       // Rejected/pending renewal charges are informational only here: a
       // single declined renewal doesn't immediately revoke access. Mercado
