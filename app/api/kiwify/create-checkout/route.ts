@@ -23,7 +23,13 @@ export async function POST() {
     return NextResponse.json({ error: "falha ao iniciar assinatura" }, { status: 502 });
   }
 
-  const url = new URL(base);
+  let url: URL;
+  try {
+    url = new URL(base);
+  } catch {
+    console.error("[kiwify] KIWIFY_CHECKOUT_URL inválida", base);
+    return NextResponse.json({ error: "falha ao iniciar assinatura" }, { status: 502 });
+  }
   url.searchParams.set("email", user.email);
   url.searchParams.set("src", user.id);
 

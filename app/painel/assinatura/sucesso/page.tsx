@@ -60,8 +60,8 @@ function SucessoContent() {
             </h1>
             <p className="m-0 mb-6 text-sm text-[#64748B]">
               {attempts >= 10
-                ? "Ainda estamos confirmando com o Mercado Pago. Pode levar alguns minutos — o plano PRO libera automaticamente assim que a confirmação chegar, sem precisar fazer nada."
-                : "Aguarde só um instante enquanto confirmamos com o Mercado Pago."}
+                ? "Ainda estamos confirmando seu pagamento. Pode levar alguns minutos — o plano PRO libera automaticamente assim que a confirmação chegar, sem precisar fazer nada."
+                : "Aguarde só um instante enquanto confirmamos seu pagamento."}
             </p>
             <Link
               href="/painel"

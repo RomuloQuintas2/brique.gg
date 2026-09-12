@@ -2,12 +2,12 @@ import Link from "next/link";
 import { X } from "lucide-react";
 import PageHeader from "@/components/brique-control/PageHeader";
 
-// NOTE: the Preapproval (subscription) API only accepts a single `back_url`,
-// unlike the one-off Preference API's back_urls{success,pending,failure}
-// object -- so Mercado Pago has no way to redirect here on its own after a
-// declined/cancelled checkout. This page exists for a future explicit deep
-// link (e.g. a status check that detects a rejected payment), not because
-// Mercado Pago's redirect can reach it directly today.
+// NOTE: Kiwify's checkout has no built-in way to redirect here on a
+// declined/cancelled payment -- only a single "thank you page" URL,
+// configured in the Kiwify dashboard's product settings, for the approved
+// case (see /painel/assinatura/sucesso). This page exists for a future
+// explicit deep link, not because Kiwify's checkout can reach it directly
+// today.
 export default function AssinaturaErroPage() {
   return (
     <>
